@@ -1,0 +1,120 @@
+syntax = "proto3";
+
+package video;
+
+import "google/api/annotations.proto";
+
+service VideoService {
+  // Search returns a Google search result for the query.
+  rpc GetDetail(RequestVideoID) returns (ResponseVideoDetail){
+	option (google.api.http) = {
+       get: "/v1/video/getdetail/{VideoID}"
+    };
+}
+  rpc GetCover(RequestVideoID) returns (ResponseVideoCover){
+	option (google.api.http) = {
+       get: "/v1/video/getcover/{VideoID}"
+    };
+}
+  rpc GetTS(RequestVideoID) returns (ResponseVideoTS){
+	option (google.api.http) = {
+       get: "/v1/video/getts/{VideoID}"
+    };
+}
+  rpc GetTotalView(RequestVideoID) returns (ResponseVideoTotalView){
+	option (google.api.http) = {
+       get: "/v1/video/gettotalview/{VideoID}"
+    };
+}
+
+  //Delete video, delete field
+  rpc DeleteVideo(RequestDeleteVideo) returns (ResponseDeleteVideo){
+	option (google.api.http) = {
+       post: "/v1/video/delete"
+	   body: "*"
+    };
+}
+
+  //Set videoDetail, field, update field
+  rpc SetVideo(RequestUpdateVideo) returns (ResponseUpdateVideo){
+	option (google.api.http) = {
+       post: "/v1/video/update"
+	   body: "*"
+    };
+  }
+}
+
+message RequestDeleteVideo {
+	string VideoID = 1;
+	repeated VideoDetail video = 2;
+}
+
+message ResponseDeleteVideo {
+	ErrorCode error = 1;
+	string description  = 2;
+}
+
+
+message RequestUpdateVideo {
+	string VideoID = 1;
+	repeated VideoDetail video = 2;
+}
+
+message ResponseUpdateVideo {
+	ErrorCode error = 1;
+	string description  = 2;
+}
+
+message RequestVideoID {
+	string VideoID = 1;
+}
+
+message ResponseVideoDetail {
+	ErrorCode error = 1;
+	string description  = 2;
+	repeated VideoDetail video = 3;
+}
+
+message VideoDetail {
+  map<string, string> video_detail = 1;
+}
+
+message ResponseVideoCover {
+    ErrorCode error = 1;
+	string description  = 2;
+	string cover = 3;
+}
+
+message ResponseVideoTS {
+    ErrorCode error = 1;
+	string description  = 2;
+	int64 timestamp = 3;
+}
+
+message ResponseVideoTotalView {
+    ErrorCode error = 1;
+	string description  = 2;
+	int32 totalview = 3;
+}
+
+enum ErrorCode
+{
+	OK = 0;
+
+	// client
+	REQUEST_INVALID = 1000;
+	
+	//server response
+	VIDEOID_WRONG = 1100;
+	VIDEO_NOT_EXIST = 1101;
+	
+    // server - Generic error for client
+    DB_ERROR = 2000;
+    DATA_ERROR = 2001;
+    SERVER_ERROR = 2002;
+
+    // general - unknown
+    UNKNOWN = 3000;
+    NETWORK_ERROR = 3001;
+    SYSTEM_ERROR = 3002;
+}

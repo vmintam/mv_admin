@@ -1,0 +1,334 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "protos/video/video.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/video/delete": {
+      "post": {
+        "summary": "Delete video, delete field",
+        "operationId": "DeleteVideo",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/videoResponseDeleteVideo"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/videoRequestDeleteVideo"
+            }
+          }
+        ],
+        "tags": [
+          "VideoService"
+        ]
+      }
+    },
+    "/v1/video/getcover/{VideoID}": {
+      "get": {
+        "operationId": "GetCover",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/videoResponseVideoCover"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "VideoID",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "string"
+          }
+        ],
+        "tags": [
+          "VideoService"
+        ]
+      }
+    },
+    "/v1/video/getdetail/{VideoID}": {
+      "get": {
+        "summary": "Search returns a Google search result for the query.",
+        "operationId": "GetDetail",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/videoResponseVideoDetail"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "VideoID",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "string"
+          }
+        ],
+        "tags": [
+          "VideoService"
+        ]
+      }
+    },
+    "/v1/video/gettotalview/{VideoID}": {
+      "get": {
+        "operationId": "GetTotalView",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/videoResponseVideoTotalView"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "VideoID",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "string"
+          }
+        ],
+        "tags": [
+          "VideoService"
+        ]
+      }
+    },
+    "/v1/video/getts/{VideoID}": {
+      "get": {
+        "operationId": "GetTS",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/videoResponseVideoTS"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "VideoID",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "string"
+          }
+        ],
+        "tags": [
+          "VideoService"
+        ]
+      }
+    },
+    "/v1/video/update": {
+      "post": {
+        "summary": "Set videoDetail, field, update field",
+        "operationId": "SetVideo",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/videoResponseUpdateVideo"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/videoRequestUpdateVideo"
+            }
+          }
+        ],
+        "tags": [
+          "VideoService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "videoErrorCode": {
+      "type": "string",
+      "enum": [
+        "OK",
+        "REQUEST_INVALID",
+        "VIDEOID_WRONG",
+        "VIDEO_NOT_EXIST",
+        "DB_ERROR",
+        "DATA_ERROR",
+        "SERVER_ERROR",
+        "UNKNOWN",
+        "NETWORK_ERROR",
+        "SYSTEM_ERROR"
+      ],
+      "default": "OK",
+      "description": "- REQUEST_INVALID: client\n - VIDEOID_WRONG: server response\n - DB_ERROR: server - Generic error for client\n - UNKNOWN: general - unknown"
+    },
+    "videoRequestDeleteVideo": {
+      "type": "object",
+      "properties": {
+        "VideoID": {
+          "type": "string",
+          "format": "string"
+        },
+        "video": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/videoVideoDetail"
+          }
+        }
+      }
+    },
+    "videoRequestUpdateVideo": {
+      "type": "object",
+      "properties": {
+        "VideoID": {
+          "type": "string",
+          "format": "string"
+        },
+        "video": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/videoVideoDetail"
+          }
+        }
+      }
+    },
+    "videoRequestVideoID": {
+      "type": "object",
+      "properties": {
+        "VideoID": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "videoResponseDeleteVideo": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "error": {
+          "$ref": "#/definitions/videoErrorCode"
+        }
+      }
+    },
+    "videoResponseUpdateVideo": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "error": {
+          "$ref": "#/definitions/videoErrorCode"
+        }
+      }
+    },
+    "videoResponseVideoCover": {
+      "type": "object",
+      "properties": {
+        "cover": {
+          "type": "string",
+          "format": "string"
+        },
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "error": {
+          "$ref": "#/definitions/videoErrorCode"
+        }
+      }
+    },
+    "videoResponseVideoDetail": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "error": {
+          "$ref": "#/definitions/videoErrorCode"
+        },
+        "video": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/videoVideoDetail"
+          }
+        }
+      }
+    },
+    "videoResponseVideoTS": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "error": {
+          "$ref": "#/definitions/videoErrorCode"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "videoResponseVideoTotalView": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "error": {
+          "$ref": "#/definitions/videoErrorCode"
+        },
+        "totalview": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "videoVideoDetail": {
+      "type": "object",
+      "properties": {
+        "video_detail": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "string"
+          }
+        }
+      }
+    }
+  }
+}
