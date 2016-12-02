@@ -248,6 +248,85 @@
         ]
       }
     },
+    "/v1/video/like/add": {
+      "post": {
+        "operationId": "AddUserIDToListLikeVideo",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/videoResponseGeneral"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/videoRequestAddUserID"
+            }
+          }
+        ],
+        "tags": [
+          "VideoService"
+        ]
+      }
+    },
+    "/v1/video/like/delete": {
+      "post": {
+        "operationId": "DeleteUserIDFromListLikeVideo",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/videoResponseGeneral"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/videoRequesDeleteUserID"
+            }
+          }
+        ],
+        "tags": [
+          "VideoService"
+        ]
+      }
+    },
+    "/v1/video/like/list": {
+      "post": {
+        "summary": "Like of video",
+        "operationId": "GetListUserIDLikeVideo",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/videoResponseListUserID"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/videoRequestVideoID"
+            }
+          }
+        ],
+        "tags": [
+          "VideoService"
+        ]
+      }
+    },
     "/v1/video/promote/get": {
       "get": {
         "summary": "Video promote",
@@ -324,6 +403,22 @@
       "default": "NOT_OK",
       "description": "- REQUEST_INVALID: client\n - VIDEOID_WRONG: server response\n - DB_ERROR: server - Generic error for client\n - UNKNOWN: general - unknown"
     },
+    "videoRequesDeleteUserID": {
+      "type": "object",
+      "properties": {
+        "UserID": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "string"
+          }
+        },
+        "VideoID": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
     "videoRequestAddCommentsVideoID": {
       "type": "object",
       "properties": {
@@ -336,6 +431,22 @@
           "items": {
             "$ref": "#/definitions/videoCommentsVideo"
           }
+        }
+      }
+    },
+    "videoRequestAddUserID": {
+      "type": "object",
+      "properties": {
+        "UserID": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "string"
+          }
+        },
+        "VideoID": {
+          "type": "string",
+          "format": "string"
         }
       }
     },
@@ -444,6 +555,26 @@
           "$ref": "#/definitions/videoErrorCode"
         }
       }
+    },
+    "videoResponseListUserID": {
+      "type": "object",
+      "properties": {
+        "UserID": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "string"
+          }
+        },
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "error": {
+          "$ref": "#/definitions/videoErrorCode"
+        }
+      },
+      "title": "Like of Video"
     },
     "videoResponseVideoCover": {
       "type": "object",

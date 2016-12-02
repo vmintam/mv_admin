@@ -34,12 +34,22 @@ var (
 			return err
 		},
 	}
+	video_pool_related *redis.Pool = &redis.Pool{
+		MaxIdle:     500,
+		MaxActive:   500,
+		IdleTimeout: 5 * time.Second,
+		TestOnBorrow: func(c redis.Conn, t time.Time) error {
+			_, err := c.Do("PING")
+			return err
+		},
+	}
 )
 
 // param in command line
 var (
-	index   = flag.Int("index", 0, "RPC port is 36010+index; debug port is 35010+index")
-	videodb = flag.String("videodb", "127.0.0.1:6379", "video database port for connection")
+	index         = flag.Int("index", 0, "RPC port is 36010+index; debug port is 35010+index")
+	video_db      = flag.String("video_db", "127.0.0.1:6379", "video database for connection")
+	video_related = flag.String("video_related", "127.0.0.1:6379", "video related db for connection")
 )
 
 // define server type generic
@@ -213,11 +223,56 @@ func (s *server) SetPromoteVideo(ctx context.Context, req *pb.RequestVideoID) (*
 		Description: pb.ErrorCode_OK.String(),
 	}, err
 }
+
+func (s *server) GetListUserIDLikeVideo(ctx context.Context, req *pb.RequestVideoID) (*pb.ResponseListUserID, error) {
+	userids, err := GetListUserIDLVideo(req.VideoID)
+	if err != nil {
+		return &pb.ResponseListUserID{
+			Error:       pb.ErrorCode_DB_ERROR,
+			Description: pb.ErrorCode_DB_ERROR.String(),
+		}, err
+	}
+	return &pb.ResponseListUserID{
+		Error:       pb.ErrorCode_OK,
+		Description: pb.ErrorCode_OK.String(),
+		UserID:      userids,
+	}, err
+}
+
+func (s *server) AddUserIDToListLikeVideo(ctx context.Context, req *pb.RequestAddUserID) (*pb.ResponseGeneral, error) {
+	err := AddUserIDToList(req.VideoID, req.UserID)
+	if err != nil {
+		return &pb.ResponseGeneral{
+			Error:       pb.ErrorCode_DB_ERROR,
+			Description: pb.ErrorCode_DB_ERROR.String(),
+		}, err
+	}
+	return &pb.ResponseGeneral{
+		Error:       pb.ErrorCode_OK,
+		Description: pb.ErrorCode_OK.String(),
+	}, err
+}
+
+func (s *server) DeleteUserIDFromListLikeVideo(ctx context.Context, req *pb.RequesDeleteUserID) (*pb.ResponseGeneral, error) {
+	err := DeleteUserIDFromList(req.VideoID, req.UserID)
+	if err != nil {
+		return &pb.ResponseGeneral{
+			Error:       pb.ErrorCode_DB_ERROR,
+			Description: pb.ErrorCode_DB_ERROR.String(),
+		}, err
+	}
+	return &pb.ResponseGeneral{
+		Error:       pb.ErrorCode_OK,
+		Description: pb.ErrorCode_OK.String(),
+	}, err
+}
+
 func main() {
 	//parse config
 	flag.Parse()
 	//init redisa
-	video_pool_info.Dial = zconn.RedisConnect("tcp", *videodb)
+	video_pool_info.Dial = zconn.RedisConnect("tcp", *video_db)
+	video_pool_related.Dial = zconn.RedisConnect("tcp", *video_related)
 
 	go http.ListenAndServe(fmt.Sprintf(":%d", 35010+*index), nil) // HTTP debugging
 

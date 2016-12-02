@@ -73,7 +73,43 @@ service VideoService {
        post: "/v1/video/promote/set"
 	   body: "*"
     };
+ }
+
+  //Like of video
+ rpc GetListUserIDLikeVideo(RequestVideoID) returns (ResponseListUserID){
+	option (google.api.http) = {
+       post: "/v1/video/like/list"
+	   body: "*"
+    };
 }
+  rpc AddUserIDToListLikeVideo(RequestAddUserID) returns (ResponseGeneral){
+	option (google.api.http) = {
+       post: "/v1/video/like/add"
+	   body: "*"
+    };
+}	
+  rpc DeleteUserIDFromListLikeVideo(RequesDeleteUserID) returns (ResponseGeneral){
+	option (google.api.http) = {
+       post: "/v1/video/like/delete"
+	   body: "*"
+    };
+}
+}
+//Like of Video
+message ResponseListUserID {
+	ErrorCode error = 1;
+	string description  = 2;
+	repeated string UserID = 3;
+}
+
+message RequestAddUserID {
+	string VideoID = 1;
+	repeated string UserID = 2;
+}
+
+message RequesDeleteUserID {
+	string VideoID = 1;
+	repeated string UserID = 2;
 }
 
 message RequestGetPromoteVideo{}

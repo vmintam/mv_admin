@@ -16,6 +16,7 @@ const (
 	VIDEO_TOTAL_VIEW = "total_view"
 	COMMENTS_VIDEO   = `v::%s::c`
 	VIDEO_PROMOTE    = "v::promote"
+	USER_LIKE_VIDEO  = `v::%s::l`
 )
 
 func convertTimeStamp(ts int64) (string, error) {
@@ -156,5 +157,61 @@ func SPromoteVideo(videoID string) (err error) {
 	conn := video_pool_info.Get()
 	defer conn.Close()
 	_, err = conn.Do("SET", VIDEO_PROMOTE, videoID)
+	return
+}
+
+//Like video
+
+func GetListUserIDLVideo(videoID string) (userIDs []string, err error) {
+	conn := video_pool_related.Get()
+	defer conn.Close()
+	userIDs, err = redis.Strings(conn.Do("HKEYS", fmt.Sprintf(USER_LIKE_VIDEO, videoID)))
+	if err == redis.ErrNil {
+		return userIDs, err
+	}
+	return
+}
+
+func AddUserIDToList(videoID string, userIDs []string) (err error) {
+	conn := video_pool_related.Get()
+	defer conn.Close()
+	args := convertVL(videoID, userIDs)
+	_, err = conn.Do("HMSET", args...)
+	return
+}
+
+func DeleteUserIDFromList(videoID string, userIDs []string) (err error) {
+	conn := video_pool_related.Get()
+	defer conn.Close()
+	for _, user := range userIDs {
+		_, err = conn.Do("HDEL", videoID, user)
+		if err != nil {
+			return err
+		}
+	}
+	return
+}
+
+func convertVL(first string, input []string) (output []interface{}) {
+	output = append(output, first)
+	for _, v := range input {
+		output = append(output, v, "1")
+	}
+	return
+}
+
+func convertMaptoArray(first string, input map[string]string) (output []interface{}) {
+	output = append(output, first)
+	for k, v := range input {
+		output = append(output, k, v)
+	}
+	return
+}
+
+func revMaptoArray(first string, input map[string]string) (output []interface{}) {
+	output = append(output, first)
+	for k, v := range input {
+		output = append(output, v, k)
+	}
 	return
 }
