@@ -41,9 +41,8 @@
         ]
       }
     },
-    "/v1/video/comments/listall/{VideoID}": {
+    "/v1/video/comments/listall/{kind}/{videoID}": {
       "get": {
-        "summary": "Video comments",
         "operationId": "GetListCommentsVideo",
         "responses": {
           "200": {
@@ -55,7 +54,14 @@
         },
         "parameters": [
           {
-            "name": "VideoID",
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "videoID",
             "in": "path",
             "required": true,
             "type": "string",
@@ -86,6 +92,39 @@
             "schema": {
               "$ref": "#/definitions/videoRequestRemoveCommentsVideoID"
             }
+          }
+        ],
+        "tags": [
+          "VideoService"
+        ]
+      }
+    },
+    "/v1/video/comments/total/{kind}/{videoID}": {
+      "get": {
+        "summary": "Video comments",
+        "operationId": "CountCommentOfVideo",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/videoResponseCountComments"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "videoID",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "string"
           }
         ],
         "tags": [
@@ -302,7 +341,6 @@
     },
     "/v1/video/like/list": {
       "post": {
-        "summary": "Like of video",
         "operationId": "GetListUserIDLikeVideo",
         "responses": {
           "200": {
@@ -320,6 +358,32 @@
             "schema": {
               "$ref": "#/definitions/videoRequestVideoID"
             }
+          }
+        ],
+        "tags": [
+          "VideoService"
+        ]
+      }
+    },
+    "/v1/video/like/total/{VideoID}": {
+      "get": {
+        "summary": "Like of video",
+        "operationId": "CountLikeOfVideo",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/videoResponseCountLike"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "VideoID",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "string"
           }
         ],
         "tags": [
@@ -363,6 +427,32 @@
             "schema": {
               "$ref": "#/definitions/videoRequestVideoID"
             }
+          }
+        ],
+        "tags": [
+          "VideoService"
+        ]
+      }
+    },
+    "/v1/video/spamlike/total/{VideoID}": {
+      "get": {
+        "summary": "Spam Like of video",
+        "operationId": "CountSpamLikeOfVideo",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/videoResponseCountSpamLike"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "VideoID",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "string"
           }
         ],
         "tags": [
@@ -431,6 +521,10 @@
           "items": {
             "$ref": "#/definitions/videoCommentsVideo"
           }
+        },
+        "kind": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -445,6 +539,19 @@
           }
         },
         "VideoID": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "videoRequestCommentVideoID": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "videoID": {
           "type": "string",
           "format": "string"
         }
@@ -482,6 +589,10 @@
             "type": "string",
             "format": "string"
           }
+        },
+        "kind": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -509,6 +620,55 @@
           "format": "string"
         }
       }
+    },
+    "videoResponseCountComments": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "error": {
+          "$ref": "#/definitions/videoErrorCode"
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "videoResponseCountLike": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "error": {
+          "$ref": "#/definitions/videoErrorCode"
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "videoResponseCountSpamLike": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "error": {
+          "$ref": "#/definitions/videoErrorCode"
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "title": "Spam Like"
     },
     "videoResponseGeneral": {
       "type": "object",
@@ -573,8 +733,7 @@
         "error": {
           "$ref": "#/definitions/videoErrorCode"
         }
-      },
-      "title": "Like of Video"
+      }
     },
     "videoResponseVideoCover": {
       "type": "object",

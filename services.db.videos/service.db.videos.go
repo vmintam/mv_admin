@@ -145,8 +145,9 @@ func (s *server) SetVideoDetail(ctx context.Context, req *pb.RequestUpdateVideo)
 	}, err
 }
 
-func (s *server) GetListCommentsVideo(ctx context.Context, req *pb.RequestVideoID) (*pb.ResponseListCommentsVideo, error) {
-	lists, err := GetListComments(req.VideoID)
+//comments
+func (s *server) GetListCommentsVideo(ctx context.Context, req *pb.RequestCommentVideoID) (*pb.ResponseListCommentsVideo, error) {
+	lists, err := GetListComments(req.VideoID, req.Kind)
 	if err != nil {
 		return &pb.ResponseListCommentsVideo{
 			Error:       pb.ErrorCode_DB_ERROR,
@@ -168,7 +169,7 @@ func (s *server) GetListCommentsVideo(ctx context.Context, req *pb.RequestVideoI
 }
 
 func (s *server) AddCommentsVideo(ctx context.Context, req *pb.RequestAddCommentsVideoID) (*pb.ResponseGeneral, error) {
-	err := AddComments(req.VideoID, req.CommentScore)
+	err := AddComments(req.VideoID, req.CommentScore, req.Kind)
 	if err != nil {
 		return &pb.ResponseGeneral{
 			Error:       pb.ErrorCode_DB_ERROR,
@@ -182,7 +183,7 @@ func (s *server) AddCommentsVideo(ctx context.Context, req *pb.RequestAddComment
 }
 
 func (s *server) RemoveCommentsVideo(ctx context.Context, req *pb.RequestRemoveCommentsVideoID) (*pb.ResponseGeneral, error) {
-	err := DeleteComments(req.VideoID, req.Comment)
+	err := DeleteComments(req.VideoID, req.Comment, req.Kind)
 	if err != nil {
 		return &pb.ResponseGeneral{
 			Error:       pb.ErrorCode_DB_ERROR,
@@ -192,6 +193,21 @@ func (s *server) RemoveCommentsVideo(ctx context.Context, req *pb.RequestRemoveC
 	return &pb.ResponseGeneral{
 		Error:       pb.ErrorCode_OK,
 		Description: pb.ErrorCode_OK.String(),
+	}, err
+}
+
+func (s *server) CountCommentOfVideo(ctx context.Context, req *pb.RequestCommentVideoID) (*pb.ResponseCountComments, error) {
+	total, err := TotalCommentVideo(req.VideoID, req.Kind)
+	if err != nil {
+		return &pb.ResponseCountComments{
+			Error:       pb.ErrorCode_DB_ERROR,
+			Description: pb.ErrorCode_DB_ERROR.String(),
+		}, err
+	}
+	return &pb.ResponseCountComments{
+		Error:       pb.ErrorCode_OK,
+		Description: pb.ErrorCode_OK.String(),
+		Total:       int32(total),
 	}, err
 }
 
@@ -264,6 +280,36 @@ func (s *server) DeleteUserIDFromListLikeVideo(ctx context.Context, req *pb.Requ
 	return &pb.ResponseGeneral{
 		Error:       pb.ErrorCode_OK,
 		Description: pb.ErrorCode_OK.String(),
+	}, err
+}
+
+func (s *server) CountLikeOfVideo(ctx context.Context, req *pb.RequestVideoID) (*pb.ResponseCountLike, error) {
+	total, err := TotalLikeVideo(req.VideoID)
+	if err != nil {
+		return &pb.ResponseCountLike{
+			Error:       pb.ErrorCode_DB_ERROR,
+			Description: pb.ErrorCode_DB_ERROR.String(),
+		}, err
+	}
+	return &pb.ResponseCountLike{
+		Error:       pb.ErrorCode_OK,
+		Description: pb.ErrorCode_OK.String(),
+		Total:       int32(total),
+	}, err
+}
+
+func (s *server) CountSpamLikeOfVideo(ctx context.Context, req *pb.RequestVideoID) (*pb.ResponseCountSpamLike, error) {
+	total, err := TotalSpamLikeVideo(req.VideoID)
+	if err != nil {
+		return &pb.ResponseCountSpamLike{
+			Error:       pb.ErrorCode_DB_ERROR,
+			Description: pb.ErrorCode_DB_ERROR.String(),
+		}, err
+	}
+	return &pb.ResponseCountSpamLike{
+		Error:       pb.ErrorCode_OK,
+		Description: pb.ErrorCode_OK.String(),
+		Total:       int32(total),
 	}, err
 }
 

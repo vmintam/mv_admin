@@ -43,26 +43,7 @@ service VideoService {
     };
   }
 
-  //Video comments
- rpc GetListCommentsVideo(RequestVideoID) returns (ResponseListCommentsVideo){
-    option (google.api.http) = {
-       get: "/v1/video/comments/listall/{VideoID}"
-    };
-}
- rpc AddCommentsVideo(RequestAddCommentsVideoID) returns (ResponseGeneral){
-   option (google.api.http) = {
-       post: "/v1/video/comments/add"
-	   body: "*"
-    };
-}
- rpc RemoveCommentsVideo(RequestRemoveCommentsVideoID) returns (ResponseGeneral){
-	option (google.api.http) = {
-       post: "/v1/video/comments/remove"
-	   body: "*"
-    };
- }
-
- //Video promote
+  //Video promote
   rpc GetPromoteVideo(RequestGetPromoteVideo) returns (ResponseGetPromoteVideo){
 	option (google.api.http) = {
        get: "/v1/video/promote/get"
@@ -76,6 +57,12 @@ service VideoService {
  }
 
   //Like of video
+rpc CountLikeOfVideo(RequestVideoID) returns (ResponseCountLike){
+	option (google.api.http) = {
+       get: "/v1/video/like/total/{VideoID}"
+    };
+}
+
  rpc GetListUserIDLikeVideo(RequestVideoID) returns (ResponseListUserID){
 	option (google.api.http) = {
        post: "/v1/video/like/list"
@@ -94,8 +81,90 @@ service VideoService {
 	   body: "*"
     };
 }
+
+//Spam Like of video
+ rpc CountSpamLikeOfVideo(RequestVideoID) returns (ResponseCountSpamLike){
+	option (google.api.http) = {
+       get: "/v1/video/spamlike/total/{VideoID}"
+    };
+ }
+
+//Video comments
+rpc CountCommentOfVideo(RequestCommentVideoID) returns (ResponseCountComments){
+	option (google.api.http) = {
+       get: "/v1/video/comments/total/{kind}/{videoID}"
+    };
 }
+ rpc GetListCommentsVideo(RequestCommentVideoID) returns (ResponseListCommentsVideo){
+    option (google.api.http) = {
+       get: "/v1/video/comments/listall/{kind}/{videoID}"
+    };
+}
+ rpc AddCommentsVideo(RequestAddCommentsVideoID) returns (ResponseGeneral){
+   option (google.api.http) = {
+       post: "/v1/video/comments/add"
+	   body: "*"
+    };
+}
+ rpc RemoveCommentsVideo(RequestRemoveCommentsVideoID) returns (ResponseGeneral){
+	option (google.api.http) = {
+       post: "/v1/video/comments/remove"
+	   body: "*"
+    };
+ }
+}
+
+//Comments Video
+
+message ResponseCountComments {
+	ErrorCode error = 1;
+	string description  = 2;
+	int32 total = 3;
+}
+
+message RequestAddCommentsVideoID {
+	string VideoID = 1;
+	repeated CommentsVideo comment_score = 2;
+	int32 kind = 3;
+}
+
+message RequestCommentVideoID {
+	string videoID = 1;
+	int32 kind = 2;
+}
+
+message RequestRemoveCommentsVideoID {
+	string VideoID = 1;
+	repeated string comment = 2;
+    int32 kind = 3;
+}
+
+message ResponseListCommentsVideo {
+	ErrorCode error = 1;
+	string description  = 2;
+	repeated CommentsVideo comment = 3;
+}
+
+message CommentsVideo {
+	string commentID = 1;
+	string score = 2;
+}
+
+//Spam Like
+message ResponseCountSpamLike {
+	ErrorCode error = 1;
+	string description  = 2;
+	int32 total = 3;
+}
+
 //Like of Video
+
+message ResponseCountLike {
+	ErrorCode error = 1;
+	string description  = 2;
+	int32 total = 3;
+}
+
 message ResponseListUserID {
 	ErrorCode error = 1;
 	string description  = 2;
@@ -120,30 +189,10 @@ message ResponseGetPromoteVideo {
 	string VideoID = 3;
 }
 
-message RequestAddCommentsVideoID {
-	string VideoID = 1;
-	repeated CommentsVideo comment_score = 2;
-}
 
 message ResponseGeneral {
 	ErrorCode error = 1;
 	string description  = 2;
-}
-
-message RequestRemoveCommentsVideoID {
-	string VideoID = 1;
-	repeated string comment = 2;
-}
-
-message ResponseListCommentsVideo {
-	ErrorCode error = 1;
-	string description  = 2;
-	repeated CommentsVideo comment = 3;
-}
-
-message CommentsVideo {
-	string commentID = 1;
-	string score = 2;
 }
 
 message RequestDeleteVideo {
@@ -205,4 +254,9 @@ enum ErrorCode
     UNKNOWN = 3000;
     NETWORK_ERROR = 3001;
     SYSTEM_ERROR = 3002;
+}
+
+enum CommentType {
+	Comment = 0;
+	CommentWithLikeWeight = 1;
 }

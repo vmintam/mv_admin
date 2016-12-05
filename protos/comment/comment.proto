@@ -1,0 +1,129 @@
+syntax = "proto3";
+
+package comment;
+
+import "google/api/annotations.proto";
+
+service CommentService {
+  // Comment Detail
+  rpc GetCommentDetail(RequestCommentID) returns (ResponseGetCommentDetail){
+	option (google.api.http) = {
+       get: "/v1/comment/detail/getdetail/{commentID}"
+    };
+}
+  rpc SetCommentDetail(RequestSetCommentID) returns (ResponseGeneral){
+	option (google.api.http) = {
+       post: "/v1/comment/detail/setdetail"
+	   body: "*"
+    };
+	}
+  rpc DeleteCommentDetail(RequestDeleteCommentID) returns (ResponseGeneral){
+	option (google.api.http) = {
+       post: "/v1/comment/detail/deletedetail"
+	   body: "*"
+    };
+	}
+  // Comment Reply
+rpc CountReplyOfComment(RequestCommentID) returns (ResponseCountReply){
+	option (google.api.http) = {
+       get: "/v1/video/reply/total/{commentID}"
+    };
+ }
+  rpc GetListReplyComment(RequestCommentID) returns (ResponseListReply){
+	option (google.api.http) = {
+       get: "/v1/comment/reply/list/{commentID}"
+    };
+ }
+  rpc AddToListReplyComment(RequestAddToListReplyComment) returns (ResponseGeneral){
+	option (google.api.http) = {
+       post: "/v1/comment/reply/add"
+	   body: "*"
+    };
+  }	
+  rpc DeleteFromListReplyComment(RequestDeleteFromListReplyComment) returns (ResponseGeneral){
+	option (google.api.http) = {
+       post: "/v1/comment/reply/delete"
+	   body: "*"
+    };
+ }
+}
+
+
+//reply comment
+
+message ResponseCountReply {
+	ErrorCode error = 1;
+	string description  = 2;
+	int32 total = 3;
+}
+
+message RequestDeleteFromListReplyComment {
+	string commentID = 1;
+	repeated string reply = 2;
+}
+
+message RequestAddToListReplyComment{
+	string commentID = 1;
+	repeated ReplyComment reply = 2;
+}
+
+message ReplyComment {
+	string replyID = 1;
+	string score = 2;
+}
+
+message ResponseListReply {
+	ErrorCode error = 1;
+	string description = 2;
+	repeated ReplyComment reply = 3;
+	
+}
+
+//comment detail
+message RequestCommentID {
+	string commentID = 1;
+}
+
+message ResponseGetCommentDetail {
+	ErrorCode error = 1;
+	string description  = 2;
+	map<string, string> comment_detail = 3;
+}
+
+message RequestSetCommentID {
+	string commentID = 1;
+	map<string, string> field = 2;
+}
+
+message RequestDeleteCommentID {
+	string commentID = 1;
+	repeated string field = 2;
+}
+
+message ResponseGeneral {
+	ErrorCode error = 1;
+	string description  = 2;
+}
+
+enum ErrorCode
+{
+	NOT_OK = 0;
+	OK = 200;
+
+	// client
+	REQUEST_INVALID = 1000;
+	
+	//server response
+	VIDEOID_WRONG = 1100;
+	VIDEO_NOT_EXIST = 1101;
+	
+    // server - Generic error for client
+    DB_ERROR = 2000;
+    DATA_ERROR = 2001;
+    SERVER_ERROR = 2002;
+
+    // general - unknown
+    UNKNOWN = 3000;
+    NETWORK_ERROR = 3001;
+    SYSTEM_ERROR = 3002;
+}

@@ -1,0 +1,371 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "protos/comment/comment.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/comment/detail/deletedetail": {
+      "post": {
+        "operationId": "DeleteCommentDetail",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/commentResponseGeneral"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/commentRequestDeleteCommentID"
+            }
+          }
+        ],
+        "tags": [
+          "CommentService"
+        ]
+      }
+    },
+    "/v1/comment/detail/getdetail/{commentID}": {
+      "get": {
+        "summary": "Comment Detail",
+        "operationId": "GetCommentDetail",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/commentResponseGetCommentDetail"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "commentID",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "string"
+          }
+        ],
+        "tags": [
+          "CommentService"
+        ]
+      }
+    },
+    "/v1/comment/detail/setdetail": {
+      "post": {
+        "operationId": "SetCommentDetail",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/commentResponseGeneral"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/commentRequestSetCommentID"
+            }
+          }
+        ],
+        "tags": [
+          "CommentService"
+        ]
+      }
+    },
+    "/v1/comment/reply/add": {
+      "post": {
+        "operationId": "AddToListReplyComment",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/commentResponseGeneral"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/commentRequestAddToListReplyComment"
+            }
+          }
+        ],
+        "tags": [
+          "CommentService"
+        ]
+      }
+    },
+    "/v1/comment/reply/delete": {
+      "post": {
+        "operationId": "DeleteFromListReplyComment",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/commentResponseGeneral"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/commentRequestDeleteFromListReplyComment"
+            }
+          }
+        ],
+        "tags": [
+          "CommentService"
+        ]
+      }
+    },
+    "/v1/comment/reply/list/{commentID}": {
+      "get": {
+        "operationId": "GetListReplyComment",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/commentResponseListReply"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "commentID",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "string"
+          }
+        ],
+        "tags": [
+          "CommentService"
+        ]
+      }
+    },
+    "/v1/video/reply/total/{commentID}": {
+      "get": {
+        "summary": "Comment Reply",
+        "operationId": "CountReplyOfComment",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/commentResponseCountReply"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "commentID",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "string"
+          }
+        ],
+        "tags": [
+          "CommentService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "commentErrorCode": {
+      "type": "string",
+      "enum": [
+        "NOT_OK",
+        "OK",
+        "REQUEST_INVALID",
+        "VIDEOID_WRONG",
+        "VIDEO_NOT_EXIST",
+        "DB_ERROR",
+        "DATA_ERROR",
+        "SERVER_ERROR",
+        "UNKNOWN",
+        "NETWORK_ERROR",
+        "SYSTEM_ERROR"
+      ],
+      "default": "NOT_OK",
+      "description": "- REQUEST_INVALID: client\n - VIDEOID_WRONG: server response\n - DB_ERROR: server - Generic error for client\n - UNKNOWN: general - unknown"
+    },
+    "commentReplyComment": {
+      "type": "object",
+      "properties": {
+        "replyID": {
+          "type": "string",
+          "format": "string"
+        },
+        "score": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "commentRequestAddToListReplyComment": {
+      "type": "object",
+      "properties": {
+        "commentID": {
+          "type": "string",
+          "format": "string"
+        },
+        "reply": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/commentReplyComment"
+          }
+        }
+      }
+    },
+    "commentRequestCommentID": {
+      "type": "object",
+      "properties": {
+        "commentID": {
+          "type": "string",
+          "format": "string"
+        }
+      },
+      "title": "comment detail"
+    },
+    "commentRequestDeleteCommentID": {
+      "type": "object",
+      "properties": {
+        "commentID": {
+          "type": "string",
+          "format": "string"
+        },
+        "field": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "string"
+          }
+        }
+      }
+    },
+    "commentRequestDeleteFromListReplyComment": {
+      "type": "object",
+      "properties": {
+        "commentID": {
+          "type": "string",
+          "format": "string"
+        },
+        "reply": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "string"
+          }
+        }
+      }
+    },
+    "commentRequestSetCommentID": {
+      "type": "object",
+      "properties": {
+        "commentID": {
+          "type": "string",
+          "format": "string"
+        },
+        "field": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "string"
+          }
+        }
+      }
+    },
+    "commentResponseCountReply": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "error": {
+          "$ref": "#/definitions/commentErrorCode"
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "commentResponseGeneral": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "error": {
+          "$ref": "#/definitions/commentErrorCode"
+        }
+      }
+    },
+    "commentResponseGetCommentDetail": {
+      "type": "object",
+      "properties": {
+        "comment_detail": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "string"
+          }
+        },
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "error": {
+          "$ref": "#/definitions/commentErrorCode"
+        }
+      }
+    },
+    "commentResponseListReply": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "error": {
+          "$ref": "#/definitions/commentErrorCode"
+        },
+        "reply": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/commentReplyComment"
+          }
+        }
+      }
+    }
+  }
+}

@@ -10,13 +10,15 @@ import (
 )
 
 const (
-	VIDEO_PREFIX     = "v::"
-	VIDEO_COVER      = "image"
-	VIDEO_TIMESTAMP  = "timestamp"
-	VIDEO_TOTAL_VIEW = "total_view"
-	COMMENTS_VIDEO   = `v::%s::c`
-	VIDEO_PROMOTE    = "v::promote"
-	USER_LIKE_VIDEO  = `v::%s::l`
+	VIDEO_PREFIX               = "v::"
+	VIDEO_COVER                = "image"
+	VIDEO_TIMESTAMP            = "timestamp"
+	VIDEO_TOTAL_VIEW           = "total_view"
+	COMMENTS_VIDEO             = `v::%s::c`
+	COMMENTS_VIDEO_LIKE_WEIGHT = `v::%s::c::l`
+	VIDEO_PROMOTE              = "v::promote"
+	USER_LIKE_VIDEO            = `v::%s::l`
+	USER_SPAM_LIKE_VIDEO       = `v::%s::spam_like`
 )
 
 func convertTimeStamp(ts int64) (string, error) {
@@ -85,7 +87,7 @@ func deleteVideo(videoID string, fields map[string]string) (err error) {
 		}
 		return nil
 	} else {
-		_, err = conn.Do("DEL", VIDEO_PREFIX+videoID)
+		_, err = conn.Do("HCLEAR", VIDEO_PREFIX+videoID)
 		if err != nil {
 			return err
 		}
@@ -112,21 +114,33 @@ func updateVideo(videoID string, fields map[string]string) (err error) {
 
 }
 
-func GetListComments(videoID string) (comments map[string]string, err error) {
+func GetListComments(videoID string, kind int32) (comments map[string]string, err error) {
 	conn := video_pool_info.Get()
 	defer conn.Close()
-	comments, err = redis.StringMap(conn.Do("ZRANGE", fmt.Sprintf(COMMENTS_VIDEO, videoID), "0", "-1", "withscores"))
+	key := ""
+	if kind == int32(pb.CommentType_Comment) {
+		key = fmt.Sprintf(COMMENTS_VIDEO, videoID)
+	} else {
+		key = fmt.Sprintf(COMMENTS_VIDEO_LIKE_WEIGHT, videoID)
+	}
+	comments, err = redis.StringMap(conn.Do("ZRANGE", key, "0", "-1", "withscores"))
 	if err == redis.ErrNil {
 		return comments, nil
 	}
 	return
 }
 
-func AddComments(videoID string, css []*pb.CommentsVideo) (err error) {
+func AddComments(videoID string, css []*pb.CommentsVideo, kind int32) (err error) {
 	conn := video_pool_info.Get()
 	defer conn.Close()
+	key := ""
+	if kind == int32(pb.CommentType_Comment) {
+		key = fmt.Sprintf(COMMENTS_VIDEO, videoID)
+	} else {
+		key = fmt.Sprintf(COMMENTS_VIDEO_LIKE_WEIGHT, videoID)
+	}
 	for _, cs := range css {
-		_, err = conn.Do("ZADD", fmt.Sprintf(COMMENTS_VIDEO, videoID), &cs.Score, &cs.CommentID)
+		_, err = conn.Do("ZADD", key, &cs.Score, &cs.CommentID)
 		if err != nil {
 			return err
 		}
@@ -134,11 +148,17 @@ func AddComments(videoID string, css []*pb.CommentsVideo) (err error) {
 	return nil
 }
 
-func DeleteComments(videoID string, commentid []string) (err error) {
+func DeleteComments(videoID string, commentid []string, kind int32) (err error) {
 	conn := video_pool_info.Get()
 	defer conn.Close()
+	key := ""
+	if kind == int32(pb.CommentType_Comment) {
+		key = fmt.Sprintf(COMMENTS_VIDEO, videoID)
+	} else {
+		key = fmt.Sprintf(COMMENTS_VIDEO_LIKE_WEIGHT, videoID)
+	}
 	for _, c := range commentid {
-		_, err = conn.Do("ZREM", fmt.Sprintf(COMMENTS_VIDEO, videoID), c)
+		_, err = conn.Do("ZREM", key, c)
 		if err != nil {
 			return err
 		}
@@ -188,6 +208,42 @@ func DeleteUserIDFromList(videoID string, userIDs []string) (err error) {
 		if err != nil {
 			return err
 		}
+	}
+	return
+}
+
+func TotalCommentVideo(videoID string, kind int32) (total int, err error) {
+	conn := video_pool_info.Get()
+	defer conn.Close()
+	key := ""
+	if kind == int32(pb.CommentType_Comment) {
+		key = fmt.Sprintf(COMMENTS_VIDEO, videoID)
+	} else {
+		key = fmt.Sprintf(COMMENTS_VIDEO_LIKE_WEIGHT, videoID)
+	}
+	total, err = redis.Int(conn.Do("ZCARD", key))
+	if err == redis.ErrNil {
+		return 0, nil
+	}
+	return
+}
+
+func TotalLikeVideo(videoID string) (total int, err error) {
+	conn := video_pool_related.Get()
+	defer conn.Close()
+	total, err = redis.Int(conn.Do("HLEN", fmt.Sprintf(USER_LIKE_VIDEO, videoID)))
+	if err == redis.ErrNil {
+		return 0, nil
+	}
+	return
+}
+
+func TotalSpamLikeVideo(videoID string) (total int, err error) {
+	conn := video_pool_related.Get()
+	defer conn.Close()
+	total, err = redis.Int(conn.Do("HLEN", fmt.Sprintf(USER_SPAM_LIKE_VIDEO, videoID)))
+	if err == redis.ErrNil {
+		return 0, nil
 	}
 	return
 }
