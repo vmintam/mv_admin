@@ -104,6 +104,10 @@ enum AudioListType {
 	listAudioSuggestion = 3;
 	listAudioEditorChoice = 4;
 	listAudioByHashTag = 5;
+	listAudioInEvent = 6;
+	listEventIDEnd = 7;
+	listUserIDInEvent = 8;
+	
 }
 enum ErrorCode
 {

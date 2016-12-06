@@ -21,6 +21,9 @@ const (
 	LIST_AUDIO_SUGGESTION     = `a::hot::suggest`
 	LIST_AUDIO_EDITOR_CHOICE  = `a::hot::editor_choice`
 	LIST_AUDIO_BY_HASHTAG     = `a::h_t::%s::a` //param: hash_tag_audio_name
+	LIST_AUDIO_IN_EVENT       = `e:%s:a`        //param: {event_id}
+	LIST_EVENTID_END          = `e:all`
+	LIST_USERID_IN_EVENT      = `e:%s:u` //param: eventID
 )
 
 func gList(requestID string, listtype pb.AudioListType) (list map[string]string, err error) {
@@ -40,6 +43,20 @@ func gList(requestID string, listtype pb.AudioListType) (list map[string]string,
 		key = fmt.Sprintf(LIST_TOPIC_WITH_RANK, requestID)
 	case pb.AudioListType_listCategories:
 		key = LIST_CATEGORIES_WITH_RANK
+	case pb.AudioListType_listAudioInEvent:
+		key = fmt.Sprintf(LIST_AUDIO_IN_EVENT, requestID)
+	case pb.AudioListType_listEventIDEnd:
+		key = LIST_EVENTID_END
+	case pb.AudioListType_listUserIDInEvent:
+		key = fmt.Sprintf(LIST_USERID_IN_EVENT, requestID)
+		arrs, err := redis.Strings(conn.Do("SMEMBERS", key))
+		if err == redis.ErrNil {
+			return list, nil
+		}
+		for _, v := range arrs {
+			list[v] = "1"
+		}
+		return list, nil
 	default:
 		break
 	}
@@ -67,6 +84,20 @@ func aList(requestID string, listtype pb.AudioListType, member_scores map[string
 		key = fmt.Sprintf(LIST_TOPIC_WITH_RANK, requestID)
 	case pb.AudioListType_listCategories:
 		key = LIST_CATEGORIES_WITH_RANK
+	case pb.AudioListType_listAudioInEvent:
+		key = fmt.Sprintf(LIST_AUDIO_IN_EVENT, requestID)
+	case pb.AudioListType_listEventIDEnd:
+		key = LIST_EVENTID_END
+	case pb.AudioListType_listUserIDInEvent:
+		key = fmt.Sprintf(LIST_USERID_IN_EVENT, requestID)
+		for member, _ := range member_scores {
+			_, err := conn.Do("SADD", key, member)
+			if err == redis.ErrNil {
+				return nil
+			}
+			return err
+		}
+
 	default:
 		break
 	}
@@ -92,6 +123,19 @@ func rList(requestID string, listtype pb.AudioListType, member_scores map[string
 		key = fmt.Sprintf(LIST_TOPIC_WITH_RANK, requestID)
 	case pb.AudioListType_listCategories:
 		key = LIST_CATEGORIES_WITH_RANK
+	case pb.AudioListType_listAudioInEvent:
+		key = fmt.Sprintf(LIST_AUDIO_IN_EVENT, requestID)
+	case pb.AudioListType_listEventIDEnd:
+		key = LIST_EVENTID_END
+	case pb.AudioListType_listUserIDInEvent:
+		key = fmt.Sprintf(LIST_USERID_IN_EVENT, requestID)
+		for member, _ := range member_scores {
+			_, err := conn.Do("SREM", key, member)
+			if err == redis.ErrNil {
+				return nil
+			}
+			return err
+		}
 	default:
 		break
 	}
