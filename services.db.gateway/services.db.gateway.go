@@ -4,6 +4,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	pbaudio "muvik/muvik_admin/protos/audio"
 	pbcomment "muvik/muvik_admin/protos/comment"
 	pbvideo "muvik/muvik_admin/protos/video"
 	log "muvik/muvik_admin/utilities/logging"
@@ -22,10 +23,10 @@ import (
 // param in command line
 var (
 	gatewayPort  = flag.String("port", "8080", "Gateway port")
-	videoDB      = flag.String("video_db", "localhost:36010", "video db")
-	commentDB    = flag.String("comment_db", "localhost:36020", "comment db")
-	audioDB      = flag.String("audio_db", "localhost:36030", "audio db")
-	userDB       = flag.String("user_db", "localhost:36040", "user db")
+	videoDB      = flag.String("video_db", "", "video db, example : localhost:36010")
+	commentDB    = flag.String("comment_db", "", "comment db example: localhost:36020")
+	audioDB      = flag.String("audio_db", "", "audio db example: localhost:36030")
+	userDB       = flag.String("user_db", "", "user db example: localhost:36040")
 	swaggerDir   = flag.String("swagger_dir", "../protos", "path to the directory which contains swagger definitions")
 	swaggerUIDir = flag.String("swaggerui_dir", "../swagger-ui/dist/", "path to the directory which contains swagger definitions")
 )
@@ -35,15 +36,28 @@ var (
 func newGateway(ctx context.Context, opts ...runtime.ServeMuxOption) (http.Handler, error) {
 	mux := runtime.NewServeMux(opts...)
 	dialOpts := []grpc.DialOption{grpc.WithInsecure()}
+
 	//regiser video Db service
-	err := pbvideo.RegisterVideoServiceHandlerFromEndpoint(ctx, mux, *videoDB, dialOpts)
-	if err != nil {
-		return nil, err
+	if *videoDB != "" {
+		err := pbvideo.RegisterVideoServiceHandlerFromEndpoint(ctx, mux, *videoDB, dialOpts)
+		if err != nil {
+			return nil, err
+		}
 	}
-	//regiser commend DB service
-	err = pbcomment.RegisterCommentServiceHandlerFromEndpoint(ctx, mux, *commentDB, dialOpts)
-	if err != nil {
-		return nil, err
+
+	//regiser comment DB service
+	if *commentDB != "" {
+		err := pbcomment.RegisterCommentServiceHandlerFromEndpoint(ctx, mux, *commentDB, dialOpts)
+		if err != nil {
+			return nil, err
+		}
+	}
+	//regiser audio DB service
+	if *audioDB != "" {
+		err := pbaudio.RegisterAudioServiceHandlerFromEndpoint(ctx, mux, *audioDB, dialOpts)
+		if err != nil {
+			return nil, err
+		}
 	}
 	return mux, nil
 }

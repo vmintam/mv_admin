@@ -1,0 +1,129 @@
+syntax = "proto3";
+
+package audio;
+
+import "google/api/annotations.proto";
+
+service AudioService {
+  // Audio, Topic, Categories, Event Detail
+  rpc GetDetail(RequestGetDetail) returns (ResponseGetDetail){
+	option (google.api.http) = {
+       get: "/v1/audio/detail/getdetail/{kind}/{requestID}"
+    };
+  }
+  rpc SetDetail(RequestModifyDetail) returns (ResponseGeneral){
+	option (google.api.http) = {
+       post: "/v1/audio/detail/set"
+	   body: "*"
+    };
+  }
+ rpc DeleteDetail(RequestModifyDetail) returns (ResponseGeneral){
+	option (google.api.http) = {
+       post: "/v1/audio/detail/delete"
+	   body: "*"
+    };
+  }
+
+ // list Audio top suggestion, top editor, categories, audio by topic
+
+  rpc GetList(RequestGetList) returns (ResponseGetList){
+	option (google.api.http) = {
+       get: "/v1/audio/list/get/{listtype}/{requestID}"
+    };
+  }
+
+  rpc AddToList(RequestModifyList) returns (ResponseGeneral){
+	option (google.api.http) = {
+       post: "/v1/audio/list/add"
+	   body: "*"
+    };
+  }
+
+ rpc RemoveToList(RequestModifyList) returns (ResponseGeneral){
+	option (google.api.http) = {
+       post: "/v1/audio/list/remove"
+	   body: "*"
+    };
+  }
+}
+
+// message for list Audio top suggestion, top editor, categories, audio by topic
+
+message RequestModifyList {
+	string requestID = 1;
+	int32 listtype = 2;
+	map<string, string> member_score = 3;
+}
+
+message RequestGetList {
+	string requestID = 1;
+	int32 listtype = 2;
+}
+
+message ResponseGetList {
+	ErrorCode error = 1;
+	string description  = 2;
+	map<string, string> list = 3;
+}
+
+// message for Audio, Topic, Categories, Event Detail
+
+message RequestModifyDetail {
+	string requestID = 1;
+	int32 kind = 2;
+	map<string, string> field = 3;
+}
+
+message ResponseGeneral {
+	ErrorCode error = 1;
+	string description  = 2;
+}
+
+message RequestGetDetail {
+	string requestID = 1;
+	int32  kind = 2;
+}
+
+message ResponseGetDetail {
+	ErrorCode error = 1;
+	string description  = 2;
+	map<string, string> detail = 3;
+}
+
+enum AudioKind {
+	audio = 0;
+	topic = 1;
+	category = 2;
+	event = 3;
+}
+
+enum AudioListType {
+	listCategories = 0;
+	listTopic = 1;
+	listAudioRegular = 2;
+	listAudioSuggestion = 3;
+	listAudioEditorChoice = 4;
+	listAudioByHashTag = 5;
+}
+enum ErrorCode
+{
+	NOT_OK = 0;
+	OK = 200;
+
+	// client
+	REQUEST_INVALID = 1000;
+	
+	//server response
+	VIDEOID_WRONG = 1100;
+	VIDEO_NOT_EXIST = 1101;
+	
+    // server - Generic error for client
+    DB_ERROR = 2000;
+    DATA_ERROR = 2001;
+    SERVER_ERROR = 2002;
+
+    // general - unknown
+    UNKNOWN = 3000;
+    NETWORK_ERROR = 3001;
+    SYSTEM_ERROR = 3002;
+}

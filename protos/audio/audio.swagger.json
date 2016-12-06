@@ -1,0 +1,324 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "protos/audio/audio.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/audio/detail/delete": {
+      "post": {
+        "operationId": "DeleteDetail",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/audioResponseGeneral"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/audioRequestModifyDetail"
+            }
+          }
+        ],
+        "tags": [
+          "AudioService"
+        ]
+      }
+    },
+    "/v1/audio/detail/getdetail/{kind}/{requestID}": {
+      "get": {
+        "summary": "Audio, Topic, Categories, Event Detail",
+        "operationId": "GetDetail",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/audioResponseGetDetail"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "requestID",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "string"
+          }
+        ],
+        "tags": [
+          "AudioService"
+        ]
+      }
+    },
+    "/v1/audio/detail/set": {
+      "post": {
+        "operationId": "SetDetail",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/audioResponseGeneral"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/audioRequestModifyDetail"
+            }
+          }
+        ],
+        "tags": [
+          "AudioService"
+        ]
+      }
+    },
+    "/v1/audio/list/add": {
+      "post": {
+        "operationId": "AddToList",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/audioResponseGeneral"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/audioRequestModifyList"
+            }
+          }
+        ],
+        "tags": [
+          "AudioService"
+        ]
+      }
+    },
+    "/v1/audio/list/get/{listtype}/{requestID}": {
+      "get": {
+        "operationId": "GetList",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/audioResponseGetList"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "listtype",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "requestID",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "string"
+          }
+        ],
+        "tags": [
+          "AudioService"
+        ]
+      }
+    },
+    "/v1/audio/list/remove": {
+      "post": {
+        "operationId": "RemoveToList",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/audioResponseGeneral"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/audioRequestModifyList"
+            }
+          }
+        ],
+        "tags": [
+          "AudioService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "audioErrorCode": {
+      "type": "string",
+      "enum": [
+        "NOT_OK",
+        "OK",
+        "REQUEST_INVALID",
+        "VIDEOID_WRONG",
+        "VIDEO_NOT_EXIST",
+        "DB_ERROR",
+        "DATA_ERROR",
+        "SERVER_ERROR",
+        "UNKNOWN",
+        "NETWORK_ERROR",
+        "SYSTEM_ERROR"
+      ],
+      "default": "NOT_OK",
+      "description": "- REQUEST_INVALID: client\n - VIDEOID_WRONG: server response\n - DB_ERROR: server - Generic error for client\n - UNKNOWN: general - unknown"
+    },
+    "audioRequestGetDetail": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "requestID": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "audioRequestGetList": {
+      "type": "object",
+      "properties": {
+        "listtype": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "requestID": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "audioRequestModifyDetail": {
+      "type": "object",
+      "properties": {
+        "field": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "string"
+          }
+        },
+        "kind": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "requestID": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "audioRequestModifyList": {
+      "type": "object",
+      "properties": {
+        "listtype": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "member_score": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "string"
+          }
+        },
+        "requestID": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "audioResponseGeneral": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "error": {
+          "$ref": "#/definitions/audioErrorCode"
+        }
+      }
+    },
+    "audioResponseGetDetail": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "detail": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "string"
+          }
+        },
+        "error": {
+          "$ref": "#/definitions/audioErrorCode"
+        }
+      }
+    },
+    "audioResponseGetList": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "error": {
+          "$ref": "#/definitions/audioErrorCode"
+        },
+        "list": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "string"
+          }
+        }
+      }
+    }
+  }
+}
