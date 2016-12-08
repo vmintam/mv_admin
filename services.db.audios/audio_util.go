@@ -26,6 +26,47 @@ const (
 	LIST_USERID_IN_EVENT      = `e:%s:u` //param: eventID
 )
 
+func gListOne(requestID string, listtype pb.AudioListType, member string) (result string, err error) {
+	conn := audio_pool.Get()
+	defer conn.Close()
+	key := ""
+	switch listtype {
+	case pb.AudioListType_listAudioByHashTag:
+		key = fmt.Sprintf(LIST_AUDIO_BY_HASHTAG, requestID)
+	case pb.AudioListType_listAudioEditorChoice:
+		key = LIST_AUDIO_EDITOR_CHOICE
+	case pb.AudioListType_listAudioSuggestion:
+		key = LIST_AUDIO_SUGGESTION
+	case pb.AudioListType_listAudioRegular:
+		key = fmt.Sprintf(LIST_AUDIO_WITH_RANK, requestID)
+	case pb.AudioListType_listTopic:
+		key = fmt.Sprintf(LIST_TOPIC_WITH_RANK, requestID)
+	case pb.AudioListType_listCategories:
+		key = LIST_CATEGORIES_WITH_RANK
+	case pb.AudioListType_listAudioInEvent:
+		key = fmt.Sprintf(LIST_AUDIO_IN_EVENT, requestID)
+	case pb.AudioListType_listEventIDEnd:
+		key = LIST_EVENTID_END
+	case pb.AudioListType_listUserIDInEvent:
+		key = fmt.Sprintf(LIST_USERID_IN_EVENT, requestID)
+		arrs, err := redis.Strings(conn.Do("SMEMBERS", key))
+		if err == redis.ErrNil {
+			return list, nil
+		}
+		for _, v := range arrs {
+			list[v] = "1"
+		}
+		return list, nil
+	default:
+		break
+	}
+	list, err = redis.StringMap(conn.Do("ZRANGE", key, "0", "-1", "withscores"))
+	if err == redis.ErrNil {
+		return list, nil
+	}
+	return
+}
+
 func gList(requestID string, listtype pb.AudioListType) (list map[string]string, err error) {
 	conn := audio_pool.Get()
 	defer conn.Close()
@@ -155,6 +196,29 @@ func rList(requestID string, listtype pb.AudioListType, member_scores map[string
 		return nil
 	}
 
+}
+
+func gDetailOne(requestID string, kind pb.AudioKind, field string) (result string, err error) {
+	conn := audio_pool.Get()
+	defer conn.Close()
+	key := ""
+	switch kind {
+	case pb.AudioKind_audio:
+		key = fmt.Sprintf(AUDIO_DETAIL, requestID)
+	case pb.AudioKind_category:
+		key = fmt.Sprintf(CATEGORY_DETAIL, requestID)
+	case pb.AudioKind_topic:
+		key = fmt.Sprintf(TOPIC_DETAIL, requestID)
+	case pb.AudioKind_event:
+		key = fmt.Sprintf(EVENT_DETAIL, requestID)
+	default:
+		break
+	}
+	result, err = redis.StringMap(conn.Do("HGET", key, field))
+	if err == redis.ErrNil {
+		return "", nil
+	}
+	return
 }
 
 func gDetail(requestID string, kind pb.AudioKind) (Detail map[string]string, err error) {

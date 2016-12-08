@@ -41,9 +41,8 @@
         ]
       }
     },
-    "/v1/audio/detail/getdetail/{kind}/{requestID}": {
-      "get": {
-        "summary": "Audio, Topic, Categories, Event Detail",
+    "/v1/audio/detail/get": {
+      "post": {
         "operationId": "GetDetail",
         "responses": {
           "200": {
@@ -55,18 +54,38 @@
         },
         "parameters": [
           {
-            "name": "kind",
-            "in": "path",
+            "name": "body",
+            "in": "body",
             "required": true,
-            "type": "integer",
-            "format": "int32"
-          },
+            "schema": {
+              "$ref": "#/definitions/audioRequestGetDetail"
+            }
+          }
+        ],
+        "tags": [
+          "AudioService"
+        ]
+      }
+    },
+    "/v1/audio/detail/getone": {
+      "post": {
+        "operationId": "GetOne",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/audioResponseGetOne"
+            }
+          }
+        },
+        "parameters": [
           {
-            "name": "requestID",
-            "in": "path",
+            "name": "body",
+            "in": "body",
             "required": true,
-            "type": "string",
-            "format": "string"
+            "schema": {
+              "$ref": "#/definitions/audioRequestGetOne"
+            }
           }
         ],
         "tags": [
@@ -126,8 +145,8 @@
         ]
       }
     },
-    "/v1/audio/list/get/{listtype}/{requestID}": {
-      "get": {
+    "/v1/audio/list/get": {
+      "post": {
         "operationId": "GetList",
         "responses": {
           "200": {
@@ -139,18 +158,38 @@
         },
         "parameters": [
           {
-            "name": "listtype",
-            "in": "path",
+            "name": "body",
+            "in": "body",
             "required": true,
-            "type": "integer",
-            "format": "int32"
-          },
+            "schema": {
+              "$ref": "#/definitions/audioRequestGetList"
+            }
+          }
+        ],
+        "tags": [
+          "AudioService"
+        ]
+      }
+    },
+    "/v1/audio/list/getone": {
+      "post": {
+        "operationId": "GetListOne",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/audioResponseGetListOne"
+            }
+          }
+        },
+        "parameters": [
           {
-            "name": "requestID",
-            "in": "path",
+            "name": "body",
+            "in": "body",
             "required": true,
-            "type": "string",
-            "format": "string"
+            "schema": {
+              "$ref": "#/definitions/audioRequestGetListOne"
+            }
           }
         ],
         "tags": [
@@ -186,6 +225,31 @@
     }
   },
   "definitions": {
+    "audioAudioKind": {
+      "type": "string",
+      "enum": [
+        "audio",
+        "topic",
+        "category",
+        "event"
+      ],
+      "default": "audio"
+    },
+    "audioAudioListType": {
+      "type": "string",
+      "enum": [
+        "listCategories",
+        "listTopic",
+        "listAudioRegular",
+        "listAudioSuggestion",
+        "listAudioEditorChoice",
+        "listAudioByHashTag",
+        "listAudioInEvent",
+        "listEventIDEnd",
+        "listUserIDInEvent"
+      ],
+      "default": "listCategories"
+    },
     "audioErrorCode": {
       "type": "string",
       "enum": [
@@ -208,8 +272,7 @@
       "type": "object",
       "properties": {
         "kind": {
-          "type": "integer",
-          "format": "int32"
+          "$ref": "#/definitions/audioAudioKind"
         },
         "requestID": {
           "type": "string",
@@ -221,8 +284,39 @@
       "type": "object",
       "properties": {
         "listtype": {
-          "type": "integer",
-          "format": "int32"
+          "$ref": "#/definitions/audioAudioListType"
+        },
+        "requestID": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "audioRequestGetListOne": {
+      "type": "object",
+      "properties": {
+        "listtype": {
+          "$ref": "#/definitions/audioAudioListType"
+        },
+        "member": {
+          "type": "string",
+          "format": "string"
+        },
+        "requestID": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "audioRequestGetOne": {
+      "type": "object",
+      "properties": {
+        "field": {
+          "type": "string",
+          "format": "string"
+        },
+        "kind": {
+          "$ref": "#/definitions/audioAudioKind"
         },
         "requestID": {
           "type": "string",
@@ -241,8 +335,7 @@
           }
         },
         "kind": {
-          "type": "integer",
-          "format": "int32"
+          "$ref": "#/definitions/audioAudioKind"
         },
         "requestID": {
           "type": "string",
@@ -254,8 +347,7 @@
       "type": "object",
       "properties": {
         "listtype": {
-          "type": "integer",
-          "format": "int32"
+          "$ref": "#/definitions/audioAudioListType"
         },
         "member_score": {
           "type": "object",
@@ -317,6 +409,38 @@
             "type": "string",
             "format": "string"
           }
+        }
+      }
+    },
+    "audioResponseGetListOne": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "error": {
+          "$ref": "#/definitions/audioErrorCode"
+        },
+        "result": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "audioResponseGetOne": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "error": {
+          "$ref": "#/definitions/audioErrorCode"
+        },
+        "result": {
+          "type": "string",
+          "format": "string"
         }
       }
     }

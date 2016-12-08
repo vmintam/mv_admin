@@ -6,39 +6,33 @@ import "google/api/annotations.proto";
 
 service VideoService {
   // Search returns a Google search result for the query.
+ 
+  rpc GetVideoDetailOne(RequestVideoDetailOne) returns (ResponseVideoDetailOne){
+	option (google.api.http) = {
+       post: "/v1/video/detail/getone"
+	   body: "*"
+    };
+  }
+
   rpc GetVideoDetail(RequestVideoID) returns (ResponseVideoDetail){
 	option (google.api.http) = {
-       get: "/v1/video/detail/getdetail/{VideoID}"
+       post: "/v1/video/detail/get"
+	   body: "*"
     };
-}
-  rpc GetVideoCover(RequestVideoID) returns (ResponseVideoCover){
-	option (google.api.http) = {
-       get: "/v1/video/detail/getcover/{VideoID}"
-    };
-}
-  rpc GetVideoTS(RequestVideoID) returns (ResponseVideoTS){
-	option (google.api.http) = {
-       get: "/v1/video/detail/gettimestamp/{VideoID}"
-    };
-}
-  rpc GetVideoTotalView(RequestVideoID) returns (ResponseVideoTotalView){
-	option (google.api.http) = {
-       get: "/v1/video/detail/getview/{VideoID}"
-    };
-}
+  }
 
   //Delete video, delete field
-  rpc DeleteVideoDetail(RequestDeleteVideo) returns (ResponseGeneral){
+  rpc DeleteVideoDetail(RequestModifyVideo) returns (ResponseGeneral){
 	option (google.api.http) = {
        post: "/v1/video/detail/delete"
 	   body: "*"
     };
-}
+  }
 
   //Set videoDetail, field, update field
-  rpc SetVideoDetail(RequestUpdateVideo) returns (ResponseGeneral){
+  rpc SetVideoDetail(RequestModifyVideo) returns (ResponseGeneral){
 	option (google.api.http) = {
-       post: "/v1/video/detail/update"
+       post: "/v1/video/detail/set"
 	   body: "*"
     };
   }
@@ -46,163 +40,93 @@ service VideoService {
   //Video promote
   rpc GetPromoteVideo(RequestGetPromoteVideo) returns (ResponseGetPromoteVideo){
 	option (google.api.http) = {
-       get: "/v1/video/promote/get"
+       post: "/v1/video/promote/get"
     };
-}
+  }
   rpc SetPromoteVideo(RequestVideoID) returns (ResponseGeneral){
 	option (google.api.http) = {
        post: "/v1/video/promote/set"
 	   body: "*"
     };
- }
+  }
 
-  //Like of video
-rpc CountLikeOfVideo(RequestVideoID) returns (ResponseCountLike){
+  //Like, Comment of video
+  rpc GetListVideoOne(RequestGetListVideoOne) returns (ResponseGetListVideoOne){
 	option (google.api.http) = {
-       get: "/v1/video/like/total/{VideoID}"
-    };
-}
-
- rpc GetListUserIDLikeVideo(RequestVideoID) returns (ResponseListUserID){
-	option (google.api.http) = {
-       post: "/v1/video/like/list"
+       post: "/v1/video/list/getone"
 	   body: "*"
     };
-}
-  rpc AddUserIDToListLikeVideo(RequestAddUserID) returns (ResponseGeneral){
+  }
+
+  rpc GetListVideo(RequestGetListVideo) returns (ResponseGetListVideo){
+	option (google.api.http) = {
+       post: "/v1/video/list/get"
+	   body: "*"
+    };
+  }
+
+ rpc AddListVideo(RequestModifyListVideo) returns (ResponseGeneral){
 	option (google.api.http) = {
        post: "/v1/video/like/add"
 	   body: "*"
     };
-}	
-  rpc DeleteUserIDFromListLikeVideo(RequesDeleteUserID) returns (ResponseGeneral){
+  }
+  rpc RemoveListVideo(RequestModifyListVideo) returns (ResponseGeneral){
 	option (google.api.http) = {
-       post: "/v1/video/like/delete"
+       post: "/v1/video/like/remove"
 	   body: "*"
     };
+  }	
 }
 
-//Spam Like of video
- rpc CountSpamLikeOfVideo(RequestVideoID) returns (ResponseCountSpamLike){
-	option (google.api.http) = {
-       get: "/v1/video/spamlike/total/{VideoID}"
-    };
- }
+//list like, comment of video
 
-//Video comments
-rpc CountCommentOfVideo(RequestCommentVideoID) returns (ResponseCountComments){
-	option (google.api.http) = {
-       get: "/v1/video/comments/total/{kind}/{videoID}"
-    };
-}
- rpc GetListCommentsVideo(RequestCommentVideoID) returns (ResponseListCommentsVideo){
-    option (google.api.http) = {
-       get: "/v1/video/comments/listall/{kind}/{videoID}"
-    };
-}
- rpc AddCommentsVideo(RequestAddCommentsVideoID) returns (ResponseGeneral){
-   option (google.api.http) = {
-       post: "/v1/video/comments/add"
-	   body: "*"
-    };
-}
- rpc RemoveCommentsVideo(RequestRemoveCommentsVideoID) returns (ResponseGeneral){
-	option (google.api.http) = {
-       post: "/v1/video/comments/remove"
-	   body: "*"
-    };
- }
+message RequestGetListVideoOne {
+	string requestID = 1;
+	ListType listtype = 2;
+	string member = 3;
 }
 
-//Comments Video
-
-message ResponseCountComments {
+message ResponseGetListVideoOne {
 	ErrorCode error = 1;
 	string description  = 2;
-	int32 total = 3;
+	string result = 3;
 }
 
-message RequestAddCommentsVideoID {
-	string VideoID = 1;
-	repeated CommentsVideo comment_score = 2;
-	int32 kind = 3;
+message RequestGetListVideo {
+	string requestID = 1;
+	ListType listtype = 2;
 }
 
-message RequestCommentVideoID {
-	string videoID = 1;
-	int32 kind = 2;
-}
-
-message RequestRemoveCommentsVideoID {
-	string VideoID = 1;
-	repeated string comment = 2;
-    int32 kind = 3;
-}
-
-message ResponseListCommentsVideo {
+message ResponseGetListVideo {
 	ErrorCode error = 1;
 	string description  = 2;
-	repeated CommentsVideo comment = 3;
+	map<string, string> list = 3;
 }
 
-message CommentsVideo {
-	string commentID = 1;
-	string score = 2;
+message RequestModifyListVideo {
+	string requestID = 1;
+	ListType listtype = 2;
+	map<string, string> member_score = 3;
 }
 
-//Spam Like
-message ResponseCountSpamLike {
-	ErrorCode error = 1;
-	string description  = 2;
-	int32 total = 3;
-}
-
-//Like of Video
-
-message ResponseCountLike {
-	ErrorCode error = 1;
-	string description  = 2;
-	int32 total = 3;
-}
-
-message ResponseListUserID {
-	ErrorCode error = 1;
-	string description  = 2;
-	repeated string UserID = 3;
-}
-
-message RequestAddUserID {
-	string VideoID = 1;
-	repeated string UserID = 2;
-}
-
-message RequesDeleteUserID {
-	string VideoID = 1;
-	repeated string UserID = 2;
-}
+//video promote
 
 message RequestGetPromoteVideo{}
 
 message ResponseGetPromoteVideo {
-	ErrorCode error = 1;
-	string description  = 2;
-	string VideoID = 3;
+	string videoID = 1;
 }
+//Video detail
 
+message RequestModifyVideo {
+	string VideoID = 1;
+	map<string, string> field = 2;
+}
 
 message ResponseGeneral {
 	ErrorCode error = 1;
 	string description  = 2;
-}
-
-message RequestDeleteVideo {
-	string VideoID = 1;
-	map<string, string> field = 2;
-}
-
-message RequestUpdateVideo {
-	string VideoID = 1;
-	map<string, string> field = 2;
 }
 
 message RequestVideoID {
@@ -215,24 +139,14 @@ message ResponseVideoDetail {
 	map<string, string> video_detail = 3;
 }
 
-message ResponseVideoCover {
-    ErrorCode error = 1;
-	string description  = 2;
-	string cover = 3;
+message ResponseVideoDetailOne {
+	string result = 1;
 }
 
-message ResponseVideoTS {
-    ErrorCode error = 1;
-	string description  = 2;
-	int64 timestamp = 3;
+message RequestVideoDetailOne {
+	string videoID = 1;
+	string field = 2;
 }
-
-message ResponseVideoTotalView {
-    ErrorCode error = 1;
-	string description  = 2;
-	int32 totalview = 3;
-}
-
 enum ErrorCode
 {
 	NOT_OK = 0;
@@ -256,7 +170,25 @@ enum ErrorCode
     SYSTEM_ERROR = 3002;
 }
 
-enum CommentType {
+enum ListType {
 	Comment = 0;
 	CommentWithLikeWeight = 1;
+}
+
+enum VideoStatus {
+	Exist = 0;
+	Private = 1;
+	Public = 2;
+	Delete = 3;
+	NotExit = -1;
+}
+
+enum TimeInTopTrend {
+	NotInTop = 0;
+	InTop = 1;  //time in top 100 trending
+}
+
+enum BlockTop {
+	NotBlocked = 0;
+	Blocked = 1;  // video is denied in any top
 }

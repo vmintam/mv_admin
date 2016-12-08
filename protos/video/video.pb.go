@@ -9,27 +9,19 @@ It is generated from these files:
 	protos/video/video.proto
 
 It has these top-level messages:
-	ResponseCountComments
-	RequestAddCommentsVideoID
-	RequestCommentVideoID
-	RequestRemoveCommentsVideoID
-	ResponseListCommentsVideo
-	CommentsVideo
-	ResponseCountSpamLike
-	ResponseCountLike
-	ResponseListUserID
-	RequestAddUserID
-	RequesDeleteUserID
+	RequestGetListVideoOne
+	ResponseGetListVideoOne
+	RequestGetListVideo
+	ResponseGetListVideo
+	RequestModifyListVideo
 	RequestGetPromoteVideo
 	ResponseGetPromoteVideo
+	RequestModifyVideo
 	ResponseGeneral
-	RequestDeleteVideo
-	RequestUpdateVideo
 	RequestVideoID
 	ResponseVideoDetail
-	ResponseVideoCover
-	ResponseVideoTS
-	ResponseVideoTotalView
+	ResponseVideoDetailOne
+	RequestVideoDetailOne
 */
 package video
 
@@ -106,158 +98,166 @@ func (x ErrorCode) String() string {
 }
 func (ErrorCode) EnumDescriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
 
-type CommentType int32
+type ListType int32
 
 const (
-	CommentType_Comment               CommentType = 0
-	CommentType_CommentWithLikeWeight CommentType = 1
+	ListType_Comment               ListType = 0
+	ListType_CommentWithLikeWeight ListType = 1
 )
 
-var CommentType_name = map[int32]string{
+var ListType_name = map[int32]string{
 	0: "Comment",
 	1: "CommentWithLikeWeight",
 }
-var CommentType_value = map[string]int32{
+var ListType_value = map[string]int32{
 	"Comment":               0,
 	"CommentWithLikeWeight": 1,
 }
 
-func (x CommentType) String() string {
-	return proto.EnumName(CommentType_name, int32(x))
+func (x ListType) String() string {
+	return proto.EnumName(ListType_name, int32(x))
 }
-func (CommentType) EnumDescriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
+func (ListType) EnumDescriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
 
-type ResponseCountComments struct {
+type VideoStatus int32
+
+const (
+	VideoStatus_Exist   VideoStatus = 0
+	VideoStatus_Private VideoStatus = 1
+	VideoStatus_Public  VideoStatus = 2
+	VideoStatus_Delete  VideoStatus = 3
+	VideoStatus_NotExit VideoStatus = -1
+)
+
+var VideoStatus_name = map[int32]string{
+	0:  "Exist",
+	1:  "Private",
+	2:  "Public",
+	3:  "Delete",
+	-1: "NotExit",
+}
+var VideoStatus_value = map[string]int32{
+	"Exist":   0,
+	"Private": 1,
+	"Public":  2,
+	"Delete":  3,
+	"NotExit": -1,
+}
+
+func (x VideoStatus) String() string {
+	return proto.EnumName(VideoStatus_name, int32(x))
+}
+func (VideoStatus) EnumDescriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
+
+type TimeInTopTrend int32
+
+const (
+	TimeInTopTrend_NotInTop TimeInTopTrend = 0
+	TimeInTopTrend_InTop    TimeInTopTrend = 1
+)
+
+var TimeInTopTrend_name = map[int32]string{
+	0: "NotInTop",
+	1: "InTop",
+}
+var TimeInTopTrend_value = map[string]int32{
+	"NotInTop": 0,
+	"InTop":    1,
+}
+
+func (x TimeInTopTrend) String() string {
+	return proto.EnumName(TimeInTopTrend_name, int32(x))
+}
+func (TimeInTopTrend) EnumDescriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
+
+type BlockTop int32
+
+const (
+	BlockTop_NotBlocked BlockTop = 0
+	BlockTop_Blocked    BlockTop = 1
+)
+
+var BlockTop_name = map[int32]string{
+	0: "NotBlocked",
+	1: "Blocked",
+}
+var BlockTop_value = map[string]int32{
+	"NotBlocked": 0,
+	"Blocked":    1,
+}
+
+func (x BlockTop) String() string {
+	return proto.EnumName(BlockTop_name, int32(x))
+}
+func (BlockTop) EnumDescriptor() ([]byte, []int) { return fileDescriptor0, []int{4} }
+
+type RequestGetListVideoOne struct {
+	RequestID string   `protobuf:"bytes,1,opt,name=requestID" json:"requestID,omitempty"`
+	Listtype  ListType `protobuf:"varint,2,opt,name=listtype,enum=video.ListType" json:"listtype,omitempty"`
+	Member    string   `protobuf:"bytes,3,opt,name=member" json:"member,omitempty"`
+}
+
+func (m *RequestGetListVideoOne) Reset()                    { *m = RequestGetListVideoOne{} }
+func (m *RequestGetListVideoOne) String() string            { return proto.CompactTextString(m) }
+func (*RequestGetListVideoOne) ProtoMessage()               {}
+func (*RequestGetListVideoOne) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
+
+type ResponseGetListVideoOne struct {
 	Error       ErrorCode `protobuf:"varint,1,opt,name=error,enum=video.ErrorCode" json:"error,omitempty"`
 	Description string    `protobuf:"bytes,2,opt,name=description" json:"description,omitempty"`
-	Total       int32     `protobuf:"varint,3,opt,name=total" json:"total,omitempty"`
+	Result      string    `protobuf:"bytes,3,opt,name=result" json:"result,omitempty"`
 }
 
-func (m *ResponseCountComments) Reset()                    { *m = ResponseCountComments{} }
-func (m *ResponseCountComments) String() string            { return proto.CompactTextString(m) }
-func (*ResponseCountComments) ProtoMessage()               {}
-func (*ResponseCountComments) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
+func (m *ResponseGetListVideoOne) Reset()                    { *m = ResponseGetListVideoOne{} }
+func (m *ResponseGetListVideoOne) String() string            { return proto.CompactTextString(m) }
+func (*ResponseGetListVideoOne) ProtoMessage()               {}
+func (*ResponseGetListVideoOne) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
 
-type RequestAddCommentsVideoID struct {
-	VideoID      string           `protobuf:"bytes,1,opt,name=VideoID" json:"VideoID,omitempty"`
-	CommentScore []*CommentsVideo `protobuf:"bytes,2,rep,name=comment_score" json:"comment_score,omitempty"`
-	Kind         int32            `protobuf:"varint,3,opt,name=kind" json:"kind,omitempty"`
+type RequestGetListVideo struct {
+	RequestID string   `protobuf:"bytes,1,opt,name=requestID" json:"requestID,omitempty"`
+	Listtype  ListType `protobuf:"varint,2,opt,name=listtype,enum=video.ListType" json:"listtype,omitempty"`
 }
 
-func (m *RequestAddCommentsVideoID) Reset()                    { *m = RequestAddCommentsVideoID{} }
-func (m *RequestAddCommentsVideoID) String() string            { return proto.CompactTextString(m) }
-func (*RequestAddCommentsVideoID) ProtoMessage()               {}
-func (*RequestAddCommentsVideoID) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
+func (m *RequestGetListVideo) Reset()                    { *m = RequestGetListVideo{} }
+func (m *RequestGetListVideo) String() string            { return proto.CompactTextString(m) }
+func (*RequestGetListVideo) ProtoMessage()               {}
+func (*RequestGetListVideo) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
 
-func (m *RequestAddCommentsVideoID) GetCommentScore() []*CommentsVideo {
+type ResponseGetListVideo struct {
+	Error       ErrorCode         `protobuf:"varint,1,opt,name=error,enum=video.ErrorCode" json:"error,omitempty"`
+	Description string            `protobuf:"bytes,2,opt,name=description" json:"description,omitempty"`
+	List        map[string]string `protobuf:"bytes,3,rep,name=list" json:"list,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+}
+
+func (m *ResponseGetListVideo) Reset()                    { *m = ResponseGetListVideo{} }
+func (m *ResponseGetListVideo) String() string            { return proto.CompactTextString(m) }
+func (*ResponseGetListVideo) ProtoMessage()               {}
+func (*ResponseGetListVideo) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
+
+func (m *ResponseGetListVideo) GetList() map[string]string {
 	if m != nil {
-		return m.CommentScore
+		return m.List
 	}
 	return nil
 }
 
-type RequestCommentVideoID struct {
-	VideoID string `protobuf:"bytes,1,opt,name=videoID" json:"videoID,omitempty"`
-	Kind    int32  `protobuf:"varint,2,opt,name=kind" json:"kind,omitempty"`
+type RequestModifyListVideo struct {
+	RequestID   string            `protobuf:"bytes,1,opt,name=requestID" json:"requestID,omitempty"`
+	Listtype    ListType          `protobuf:"varint,2,opt,name=listtype,enum=video.ListType" json:"listtype,omitempty"`
+	MemberScore map[string]string `protobuf:"bytes,3,rep,name=member_score" json:"member_score,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 }
 
-func (m *RequestCommentVideoID) Reset()                    { *m = RequestCommentVideoID{} }
-func (m *RequestCommentVideoID) String() string            { return proto.CompactTextString(m) }
-func (*RequestCommentVideoID) ProtoMessage()               {}
-func (*RequestCommentVideoID) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
+func (m *RequestModifyListVideo) Reset()                    { *m = RequestModifyListVideo{} }
+func (m *RequestModifyListVideo) String() string            { return proto.CompactTextString(m) }
+func (*RequestModifyListVideo) ProtoMessage()               {}
+func (*RequestModifyListVideo) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4} }
 
-type RequestRemoveCommentsVideoID struct {
-	VideoID string   `protobuf:"bytes,1,opt,name=VideoID" json:"VideoID,omitempty"`
-	Comment []string `protobuf:"bytes,2,rep,name=comment" json:"comment,omitempty"`
-	Kind    int32    `protobuf:"varint,3,opt,name=kind" json:"kind,omitempty"`
-}
-
-func (m *RequestRemoveCommentsVideoID) Reset()                    { *m = RequestRemoveCommentsVideoID{} }
-func (m *RequestRemoveCommentsVideoID) String() string            { return proto.CompactTextString(m) }
-func (*RequestRemoveCommentsVideoID) ProtoMessage()               {}
-func (*RequestRemoveCommentsVideoID) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
-
-type ResponseListCommentsVideo struct {
-	Error       ErrorCode        `protobuf:"varint,1,opt,name=error,enum=video.ErrorCode" json:"error,omitempty"`
-	Description string           `protobuf:"bytes,2,opt,name=description" json:"description,omitempty"`
-	Comment     []*CommentsVideo `protobuf:"bytes,3,rep,name=comment" json:"comment,omitempty"`
-}
-
-func (m *ResponseListCommentsVideo) Reset()                    { *m = ResponseListCommentsVideo{} }
-func (m *ResponseListCommentsVideo) String() string            { return proto.CompactTextString(m) }
-func (*ResponseListCommentsVideo) ProtoMessage()               {}
-func (*ResponseListCommentsVideo) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4} }
-
-func (m *ResponseListCommentsVideo) GetComment() []*CommentsVideo {
+func (m *RequestModifyListVideo) GetMemberScore() map[string]string {
 	if m != nil {
-		return m.Comment
+		return m.MemberScore
 	}
 	return nil
 }
-
-type CommentsVideo struct {
-	CommentID string `protobuf:"bytes,1,opt,name=commentID" json:"commentID,omitempty"`
-	Score     string `protobuf:"bytes,2,opt,name=score" json:"score,omitempty"`
-}
-
-func (m *CommentsVideo) Reset()                    { *m = CommentsVideo{} }
-func (m *CommentsVideo) String() string            { return proto.CompactTextString(m) }
-func (*CommentsVideo) ProtoMessage()               {}
-func (*CommentsVideo) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{5} }
-
-// Spam Like
-type ResponseCountSpamLike struct {
-	Error       ErrorCode `protobuf:"varint,1,opt,name=error,enum=video.ErrorCode" json:"error,omitempty"`
-	Description string    `protobuf:"bytes,2,opt,name=description" json:"description,omitempty"`
-	Total       int32     `protobuf:"varint,3,opt,name=total" json:"total,omitempty"`
-}
-
-func (m *ResponseCountSpamLike) Reset()                    { *m = ResponseCountSpamLike{} }
-func (m *ResponseCountSpamLike) String() string            { return proto.CompactTextString(m) }
-func (*ResponseCountSpamLike) ProtoMessage()               {}
-func (*ResponseCountSpamLike) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{6} }
-
-type ResponseCountLike struct {
-	Error       ErrorCode `protobuf:"varint,1,opt,name=error,enum=video.ErrorCode" json:"error,omitempty"`
-	Description string    `protobuf:"bytes,2,opt,name=description" json:"description,omitempty"`
-	Total       int32     `protobuf:"varint,3,opt,name=total" json:"total,omitempty"`
-}
-
-func (m *ResponseCountLike) Reset()                    { *m = ResponseCountLike{} }
-func (m *ResponseCountLike) String() string            { return proto.CompactTextString(m) }
-func (*ResponseCountLike) ProtoMessage()               {}
-func (*ResponseCountLike) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{7} }
-
-type ResponseListUserID struct {
-	Error       ErrorCode `protobuf:"varint,1,opt,name=error,enum=video.ErrorCode" json:"error,omitempty"`
-	Description string    `protobuf:"bytes,2,opt,name=description" json:"description,omitempty"`
-	UserID      []string  `protobuf:"bytes,3,rep,name=UserID" json:"UserID,omitempty"`
-}
-
-func (m *ResponseListUserID) Reset()                    { *m = ResponseListUserID{} }
-func (m *ResponseListUserID) String() string            { return proto.CompactTextString(m) }
-func (*ResponseListUserID) ProtoMessage()               {}
-func (*ResponseListUserID) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{8} }
-
-type RequestAddUserID struct {
-	VideoID string   `protobuf:"bytes,1,opt,name=VideoID" json:"VideoID,omitempty"`
-	UserID  []string `protobuf:"bytes,2,rep,name=UserID" json:"UserID,omitempty"`
-}
-
-func (m *RequestAddUserID) Reset()                    { *m = RequestAddUserID{} }
-func (m *RequestAddUserID) String() string            { return proto.CompactTextString(m) }
-func (*RequestAddUserID) ProtoMessage()               {}
-func (*RequestAddUserID) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{9} }
-
-type RequesDeleteUserID struct {
-	VideoID string   `protobuf:"bytes,1,opt,name=VideoID" json:"VideoID,omitempty"`
-	UserID  []string `protobuf:"bytes,2,rep,name=UserID" json:"UserID,omitempty"`
-}
-
-func (m *RequesDeleteUserID) Reset()                    { *m = RequesDeleteUserID{} }
-func (m *RequesDeleteUserID) String() string            { return proto.CompactTextString(m) }
-func (*RequesDeleteUserID) ProtoMessage()               {}
-func (*RequesDeleteUserID) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{10} }
 
 type RequestGetPromoteVideo struct {
 }
@@ -265,18 +265,33 @@ type RequestGetPromoteVideo struct {
 func (m *RequestGetPromoteVideo) Reset()                    { *m = RequestGetPromoteVideo{} }
 func (m *RequestGetPromoteVideo) String() string            { return proto.CompactTextString(m) }
 func (*RequestGetPromoteVideo) ProtoMessage()               {}
-func (*RequestGetPromoteVideo) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{11} }
+func (*RequestGetPromoteVideo) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{5} }
 
 type ResponseGetPromoteVideo struct {
-	Error       ErrorCode `protobuf:"varint,1,opt,name=error,enum=video.ErrorCode" json:"error,omitempty"`
-	Description string    `protobuf:"bytes,2,opt,name=description" json:"description,omitempty"`
-	VideoID     string    `protobuf:"bytes,3,opt,name=VideoID" json:"VideoID,omitempty"`
+	VideoID string `protobuf:"bytes,1,opt,name=videoID" json:"videoID,omitempty"`
 }
 
 func (m *ResponseGetPromoteVideo) Reset()                    { *m = ResponseGetPromoteVideo{} }
 func (m *ResponseGetPromoteVideo) String() string            { return proto.CompactTextString(m) }
 func (*ResponseGetPromoteVideo) ProtoMessage()               {}
-func (*ResponseGetPromoteVideo) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{12} }
+func (*ResponseGetPromoteVideo) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{6} }
+
+type RequestModifyVideo struct {
+	VideoID string            `protobuf:"bytes,1,opt,name=VideoID" json:"VideoID,omitempty"`
+	Field   map[string]string `protobuf:"bytes,2,rep,name=field" json:"field,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+}
+
+func (m *RequestModifyVideo) Reset()                    { *m = RequestModifyVideo{} }
+func (m *RequestModifyVideo) String() string            { return proto.CompactTextString(m) }
+func (*RequestModifyVideo) ProtoMessage()               {}
+func (*RequestModifyVideo) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{7} }
+
+func (m *RequestModifyVideo) GetField() map[string]string {
+	if m != nil {
+		return m.Field
+	}
+	return nil
+}
 
 type ResponseGeneral struct {
 	Error       ErrorCode `protobuf:"varint,1,opt,name=error,enum=video.ErrorCode" json:"error,omitempty"`
@@ -286,41 +301,7 @@ type ResponseGeneral struct {
 func (m *ResponseGeneral) Reset()                    { *m = ResponseGeneral{} }
 func (m *ResponseGeneral) String() string            { return proto.CompactTextString(m) }
 func (*ResponseGeneral) ProtoMessage()               {}
-func (*ResponseGeneral) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{13} }
-
-type RequestDeleteVideo struct {
-	VideoID string            `protobuf:"bytes,1,opt,name=VideoID" json:"VideoID,omitempty"`
-	Field   map[string]string `protobuf:"bytes,2,rep,name=field" json:"field,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-}
-
-func (m *RequestDeleteVideo) Reset()                    { *m = RequestDeleteVideo{} }
-func (m *RequestDeleteVideo) String() string            { return proto.CompactTextString(m) }
-func (*RequestDeleteVideo) ProtoMessage()               {}
-func (*RequestDeleteVideo) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{14} }
-
-func (m *RequestDeleteVideo) GetField() map[string]string {
-	if m != nil {
-		return m.Field
-	}
-	return nil
-}
-
-type RequestUpdateVideo struct {
-	VideoID string            `protobuf:"bytes,1,opt,name=VideoID" json:"VideoID,omitempty"`
-	Field   map[string]string `protobuf:"bytes,2,rep,name=field" json:"field,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-}
-
-func (m *RequestUpdateVideo) Reset()                    { *m = RequestUpdateVideo{} }
-func (m *RequestUpdateVideo) String() string            { return proto.CompactTextString(m) }
-func (*RequestUpdateVideo) ProtoMessage()               {}
-func (*RequestUpdateVideo) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{15} }
-
-func (m *RequestUpdateVideo) GetField() map[string]string {
-	if m != nil {
-		return m.Field
-	}
-	return nil
-}
+func (*ResponseGeneral) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{8} }
 
 type RequestVideoID struct {
 	VideoID string `protobuf:"bytes,1,opt,name=VideoID" json:"VideoID,omitempty"`
@@ -329,7 +310,7 @@ type RequestVideoID struct {
 func (m *RequestVideoID) Reset()                    { *m = RequestVideoID{} }
 func (m *RequestVideoID) String() string            { return proto.CompactTextString(m) }
 func (*RequestVideoID) ProtoMessage()               {}
-func (*RequestVideoID) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{16} }
+func (*RequestVideoID) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{9} }
 
 type ResponseVideoDetail struct {
 	Error       ErrorCode         `protobuf:"varint,1,opt,name=error,enum=video.ErrorCode" json:"error,omitempty"`
@@ -340,7 +321,7 @@ type ResponseVideoDetail struct {
 func (m *ResponseVideoDetail) Reset()                    { *m = ResponseVideoDetail{} }
 func (m *ResponseVideoDetail) String() string            { return proto.CompactTextString(m) }
 func (*ResponseVideoDetail) ProtoMessage()               {}
-func (*ResponseVideoDetail) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{17} }
+func (*ResponseVideoDetail) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{10} }
 
 func (m *ResponseVideoDetail) GetVideoDetail() map[string]string {
 	if m != nil {
@@ -349,63 +330,44 @@ func (m *ResponseVideoDetail) GetVideoDetail() map[string]string {
 	return nil
 }
 
-type ResponseVideoCover struct {
-	Error       ErrorCode `protobuf:"varint,1,opt,name=error,enum=video.ErrorCode" json:"error,omitempty"`
-	Description string    `protobuf:"bytes,2,opt,name=description" json:"description,omitempty"`
-	Cover       string    `protobuf:"bytes,3,opt,name=cover" json:"cover,omitempty"`
+type ResponseVideoDetailOne struct {
+	Result string `protobuf:"bytes,1,opt,name=result" json:"result,omitempty"`
 }
 
-func (m *ResponseVideoCover) Reset()                    { *m = ResponseVideoCover{} }
-func (m *ResponseVideoCover) String() string            { return proto.CompactTextString(m) }
-func (*ResponseVideoCover) ProtoMessage()               {}
-func (*ResponseVideoCover) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{18} }
+func (m *ResponseVideoDetailOne) Reset()                    { *m = ResponseVideoDetailOne{} }
+func (m *ResponseVideoDetailOne) String() string            { return proto.CompactTextString(m) }
+func (*ResponseVideoDetailOne) ProtoMessage()               {}
+func (*ResponseVideoDetailOne) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{11} }
 
-type ResponseVideoTS struct {
-	Error       ErrorCode `protobuf:"varint,1,opt,name=error,enum=video.ErrorCode" json:"error,omitempty"`
-	Description string    `protobuf:"bytes,2,opt,name=description" json:"description,omitempty"`
-	Timestamp   int64     `protobuf:"varint,3,opt,name=timestamp" json:"timestamp,omitempty"`
+type RequestVideoDetailOne struct {
+	VideoID string `protobuf:"bytes,1,opt,name=videoID" json:"videoID,omitempty"`
+	Field   string `protobuf:"bytes,2,opt,name=field" json:"field,omitempty"`
 }
 
-func (m *ResponseVideoTS) Reset()                    { *m = ResponseVideoTS{} }
-func (m *ResponseVideoTS) String() string            { return proto.CompactTextString(m) }
-func (*ResponseVideoTS) ProtoMessage()               {}
-func (*ResponseVideoTS) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{19} }
-
-type ResponseVideoTotalView struct {
-	Error       ErrorCode `protobuf:"varint,1,opt,name=error,enum=video.ErrorCode" json:"error,omitempty"`
-	Description string    `protobuf:"bytes,2,opt,name=description" json:"description,omitempty"`
-	Totalview   int32     `protobuf:"varint,3,opt,name=totalview" json:"totalview,omitempty"`
-}
-
-func (m *ResponseVideoTotalView) Reset()                    { *m = ResponseVideoTotalView{} }
-func (m *ResponseVideoTotalView) String() string            { return proto.CompactTextString(m) }
-func (*ResponseVideoTotalView) ProtoMessage()               {}
-func (*ResponseVideoTotalView) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{20} }
+func (m *RequestVideoDetailOne) Reset()                    { *m = RequestVideoDetailOne{} }
+func (m *RequestVideoDetailOne) String() string            { return proto.CompactTextString(m) }
+func (*RequestVideoDetailOne) ProtoMessage()               {}
+func (*RequestVideoDetailOne) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{12} }
 
 func init() {
-	proto.RegisterType((*ResponseCountComments)(nil), "video.ResponseCountComments")
-	proto.RegisterType((*RequestAddCommentsVideoID)(nil), "video.RequestAddCommentsVideoID")
-	proto.RegisterType((*RequestCommentVideoID)(nil), "video.RequestCommentVideoID")
-	proto.RegisterType((*RequestRemoveCommentsVideoID)(nil), "video.RequestRemoveCommentsVideoID")
-	proto.RegisterType((*ResponseListCommentsVideo)(nil), "video.ResponseListCommentsVideo")
-	proto.RegisterType((*CommentsVideo)(nil), "video.CommentsVideo")
-	proto.RegisterType((*ResponseCountSpamLike)(nil), "video.ResponseCountSpamLike")
-	proto.RegisterType((*ResponseCountLike)(nil), "video.ResponseCountLike")
-	proto.RegisterType((*ResponseListUserID)(nil), "video.ResponseListUserID")
-	proto.RegisterType((*RequestAddUserID)(nil), "video.RequestAddUserID")
-	proto.RegisterType((*RequesDeleteUserID)(nil), "video.RequesDeleteUserID")
+	proto.RegisterType((*RequestGetListVideoOne)(nil), "video.RequestGetListVideoOne")
+	proto.RegisterType((*ResponseGetListVideoOne)(nil), "video.ResponseGetListVideoOne")
+	proto.RegisterType((*RequestGetListVideo)(nil), "video.RequestGetListVideo")
+	proto.RegisterType((*ResponseGetListVideo)(nil), "video.ResponseGetListVideo")
+	proto.RegisterType((*RequestModifyListVideo)(nil), "video.RequestModifyListVideo")
 	proto.RegisterType((*RequestGetPromoteVideo)(nil), "video.RequestGetPromoteVideo")
 	proto.RegisterType((*ResponseGetPromoteVideo)(nil), "video.ResponseGetPromoteVideo")
+	proto.RegisterType((*RequestModifyVideo)(nil), "video.RequestModifyVideo")
 	proto.RegisterType((*ResponseGeneral)(nil), "video.ResponseGeneral")
-	proto.RegisterType((*RequestDeleteVideo)(nil), "video.RequestDeleteVideo")
-	proto.RegisterType((*RequestUpdateVideo)(nil), "video.RequestUpdateVideo")
 	proto.RegisterType((*RequestVideoID)(nil), "video.RequestVideoID")
 	proto.RegisterType((*ResponseVideoDetail)(nil), "video.ResponseVideoDetail")
-	proto.RegisterType((*ResponseVideoCover)(nil), "video.ResponseVideoCover")
-	proto.RegisterType((*ResponseVideoTS)(nil), "video.ResponseVideoTS")
-	proto.RegisterType((*ResponseVideoTotalView)(nil), "video.ResponseVideoTotalView")
+	proto.RegisterType((*ResponseVideoDetailOne)(nil), "video.ResponseVideoDetailOne")
+	proto.RegisterType((*RequestVideoDetailOne)(nil), "video.RequestVideoDetailOne")
 	proto.RegisterEnum("video.ErrorCode", ErrorCode_name, ErrorCode_value)
-	proto.RegisterEnum("video.CommentType", CommentType_name, CommentType_value)
+	proto.RegisterEnum("video.ListType", ListType_name, ListType_value)
+	proto.RegisterEnum("video.VideoStatus", VideoStatus_name, VideoStatus_value)
+	proto.RegisterEnum("video.TimeInTopTrend", TimeInTopTrend_name, TimeInTopTrend_value)
+	proto.RegisterEnum("video.BlockTop", BlockTop_name, BlockTop_value)
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -419,30 +381,20 @@ const _ = grpc.SupportPackageIsVersion3
 // Client API for VideoService service
 
 type VideoServiceClient interface {
-	// Search returns a Google search result for the query.
+	GetVideoDetailOne(ctx context.Context, in *RequestVideoDetailOne, opts ...grpc.CallOption) (*ResponseVideoDetailOne, error)
 	GetVideoDetail(ctx context.Context, in *RequestVideoID, opts ...grpc.CallOption) (*ResponseVideoDetail, error)
-	GetVideoCover(ctx context.Context, in *RequestVideoID, opts ...grpc.CallOption) (*ResponseVideoCover, error)
-	GetVideoTS(ctx context.Context, in *RequestVideoID, opts ...grpc.CallOption) (*ResponseVideoTS, error)
-	GetVideoTotalView(ctx context.Context, in *RequestVideoID, opts ...grpc.CallOption) (*ResponseVideoTotalView, error)
 	// Delete video, delete field
-	DeleteVideoDetail(ctx context.Context, in *RequestDeleteVideo, opts ...grpc.CallOption) (*ResponseGeneral, error)
+	DeleteVideoDetail(ctx context.Context, in *RequestModifyVideo, opts ...grpc.CallOption) (*ResponseGeneral, error)
 	// Set videoDetail, field, update field
-	SetVideoDetail(ctx context.Context, in *RequestUpdateVideo, opts ...grpc.CallOption) (*ResponseGeneral, error)
+	SetVideoDetail(ctx context.Context, in *RequestModifyVideo, opts ...grpc.CallOption) (*ResponseGeneral, error)
 	// Video promote
 	GetPromoteVideo(ctx context.Context, in *RequestGetPromoteVideo, opts ...grpc.CallOption) (*ResponseGetPromoteVideo, error)
 	SetPromoteVideo(ctx context.Context, in *RequestVideoID, opts ...grpc.CallOption) (*ResponseGeneral, error)
-	// Like of video
-	CountLikeOfVideo(ctx context.Context, in *RequestVideoID, opts ...grpc.CallOption) (*ResponseCountLike, error)
-	GetListUserIDLikeVideo(ctx context.Context, in *RequestVideoID, opts ...grpc.CallOption) (*ResponseListUserID, error)
-	AddUserIDToListLikeVideo(ctx context.Context, in *RequestAddUserID, opts ...grpc.CallOption) (*ResponseGeneral, error)
-	DeleteUserIDFromListLikeVideo(ctx context.Context, in *RequesDeleteUserID, opts ...grpc.CallOption) (*ResponseGeneral, error)
-	// Spam Like of video
-	CountSpamLikeOfVideo(ctx context.Context, in *RequestVideoID, opts ...grpc.CallOption) (*ResponseCountSpamLike, error)
-	// Video comments
-	CountCommentOfVideo(ctx context.Context, in *RequestCommentVideoID, opts ...grpc.CallOption) (*ResponseCountComments, error)
-	GetListCommentsVideo(ctx context.Context, in *RequestCommentVideoID, opts ...grpc.CallOption) (*ResponseListCommentsVideo, error)
-	AddCommentsVideo(ctx context.Context, in *RequestAddCommentsVideoID, opts ...grpc.CallOption) (*ResponseGeneral, error)
-	RemoveCommentsVideo(ctx context.Context, in *RequestRemoveCommentsVideoID, opts ...grpc.CallOption) (*ResponseGeneral, error)
+	// Like, Comment of video
+	GetListVideoOne(ctx context.Context, in *RequestGetListVideoOne, opts ...grpc.CallOption) (*ResponseGetListVideoOne, error)
+	GetListVideo(ctx context.Context, in *RequestGetListVideo, opts ...grpc.CallOption) (*ResponseGetListVideo, error)
+	AddListVideo(ctx context.Context, in *RequestModifyListVideo, opts ...grpc.CallOption) (*ResponseGeneral, error)
+	RemoveListVideo(ctx context.Context, in *RequestModifyListVideo, opts ...grpc.CallOption) (*ResponseGeneral, error)
 }
 
 type videoServiceClient struct {
@@ -451,6 +403,15 @@ type videoServiceClient struct {
 
 func NewVideoServiceClient(cc *grpc.ClientConn) VideoServiceClient {
 	return &videoServiceClient{cc}
+}
+
+func (c *videoServiceClient) GetVideoDetailOne(ctx context.Context, in *RequestVideoDetailOne, opts ...grpc.CallOption) (*ResponseVideoDetailOne, error) {
+	out := new(ResponseVideoDetailOne)
+	err := grpc.Invoke(ctx, "/video.VideoService/GetVideoDetailOne", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *videoServiceClient) GetVideoDetail(ctx context.Context, in *RequestVideoID, opts ...grpc.CallOption) (*ResponseVideoDetail, error) {
@@ -462,34 +423,7 @@ func (c *videoServiceClient) GetVideoDetail(ctx context.Context, in *RequestVide
 	return out, nil
 }
 
-func (c *videoServiceClient) GetVideoCover(ctx context.Context, in *RequestVideoID, opts ...grpc.CallOption) (*ResponseVideoCover, error) {
-	out := new(ResponseVideoCover)
-	err := grpc.Invoke(ctx, "/video.VideoService/GetVideoCover", in, out, c.cc, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *videoServiceClient) GetVideoTS(ctx context.Context, in *RequestVideoID, opts ...grpc.CallOption) (*ResponseVideoTS, error) {
-	out := new(ResponseVideoTS)
-	err := grpc.Invoke(ctx, "/video.VideoService/GetVideoTS", in, out, c.cc, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *videoServiceClient) GetVideoTotalView(ctx context.Context, in *RequestVideoID, opts ...grpc.CallOption) (*ResponseVideoTotalView, error) {
-	out := new(ResponseVideoTotalView)
-	err := grpc.Invoke(ctx, "/video.VideoService/GetVideoTotalView", in, out, c.cc, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *videoServiceClient) DeleteVideoDetail(ctx context.Context, in *RequestDeleteVideo, opts ...grpc.CallOption) (*ResponseGeneral, error) {
+func (c *videoServiceClient) DeleteVideoDetail(ctx context.Context, in *RequestModifyVideo, opts ...grpc.CallOption) (*ResponseGeneral, error) {
 	out := new(ResponseGeneral)
 	err := grpc.Invoke(ctx, "/video.VideoService/DeleteVideoDetail", in, out, c.cc, opts...)
 	if err != nil {
@@ -498,7 +432,7 @@ func (c *videoServiceClient) DeleteVideoDetail(ctx context.Context, in *RequestD
 	return out, nil
 }
 
-func (c *videoServiceClient) SetVideoDetail(ctx context.Context, in *RequestUpdateVideo, opts ...grpc.CallOption) (*ResponseGeneral, error) {
+func (c *videoServiceClient) SetVideoDetail(ctx context.Context, in *RequestModifyVideo, opts ...grpc.CallOption) (*ResponseGeneral, error) {
 	out := new(ResponseGeneral)
 	err := grpc.Invoke(ctx, "/video.VideoService/SetVideoDetail", in, out, c.cc, opts...)
 	if err != nil {
@@ -525,81 +459,36 @@ func (c *videoServiceClient) SetPromoteVideo(ctx context.Context, in *RequestVid
 	return out, nil
 }
 
-func (c *videoServiceClient) CountLikeOfVideo(ctx context.Context, in *RequestVideoID, opts ...grpc.CallOption) (*ResponseCountLike, error) {
-	out := new(ResponseCountLike)
-	err := grpc.Invoke(ctx, "/video.VideoService/CountLikeOfVideo", in, out, c.cc, opts...)
+func (c *videoServiceClient) GetListVideoOne(ctx context.Context, in *RequestGetListVideoOne, opts ...grpc.CallOption) (*ResponseGetListVideoOne, error) {
+	out := new(ResponseGetListVideoOne)
+	err := grpc.Invoke(ctx, "/video.VideoService/GetListVideoOne", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *videoServiceClient) GetListUserIDLikeVideo(ctx context.Context, in *RequestVideoID, opts ...grpc.CallOption) (*ResponseListUserID, error) {
-	out := new(ResponseListUserID)
-	err := grpc.Invoke(ctx, "/video.VideoService/GetListUserIDLikeVideo", in, out, c.cc, opts...)
+func (c *videoServiceClient) GetListVideo(ctx context.Context, in *RequestGetListVideo, opts ...grpc.CallOption) (*ResponseGetListVideo, error) {
+	out := new(ResponseGetListVideo)
+	err := grpc.Invoke(ctx, "/video.VideoService/GetListVideo", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *videoServiceClient) AddUserIDToListLikeVideo(ctx context.Context, in *RequestAddUserID, opts ...grpc.CallOption) (*ResponseGeneral, error) {
+func (c *videoServiceClient) AddListVideo(ctx context.Context, in *RequestModifyListVideo, opts ...grpc.CallOption) (*ResponseGeneral, error) {
 	out := new(ResponseGeneral)
-	err := grpc.Invoke(ctx, "/video.VideoService/AddUserIDToListLikeVideo", in, out, c.cc, opts...)
+	err := grpc.Invoke(ctx, "/video.VideoService/AddListVideo", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *videoServiceClient) DeleteUserIDFromListLikeVideo(ctx context.Context, in *RequesDeleteUserID, opts ...grpc.CallOption) (*ResponseGeneral, error) {
+func (c *videoServiceClient) RemoveListVideo(ctx context.Context, in *RequestModifyListVideo, opts ...grpc.CallOption) (*ResponseGeneral, error) {
 	out := new(ResponseGeneral)
-	err := grpc.Invoke(ctx, "/video.VideoService/DeleteUserIDFromListLikeVideo", in, out, c.cc, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *videoServiceClient) CountSpamLikeOfVideo(ctx context.Context, in *RequestVideoID, opts ...grpc.CallOption) (*ResponseCountSpamLike, error) {
-	out := new(ResponseCountSpamLike)
-	err := grpc.Invoke(ctx, "/video.VideoService/CountSpamLikeOfVideo", in, out, c.cc, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *videoServiceClient) CountCommentOfVideo(ctx context.Context, in *RequestCommentVideoID, opts ...grpc.CallOption) (*ResponseCountComments, error) {
-	out := new(ResponseCountComments)
-	err := grpc.Invoke(ctx, "/video.VideoService/CountCommentOfVideo", in, out, c.cc, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *videoServiceClient) GetListCommentsVideo(ctx context.Context, in *RequestCommentVideoID, opts ...grpc.CallOption) (*ResponseListCommentsVideo, error) {
-	out := new(ResponseListCommentsVideo)
-	err := grpc.Invoke(ctx, "/video.VideoService/GetListCommentsVideo", in, out, c.cc, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *videoServiceClient) AddCommentsVideo(ctx context.Context, in *RequestAddCommentsVideoID, opts ...grpc.CallOption) (*ResponseGeneral, error) {
-	out := new(ResponseGeneral)
-	err := grpc.Invoke(ctx, "/video.VideoService/AddCommentsVideo", in, out, c.cc, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *videoServiceClient) RemoveCommentsVideo(ctx context.Context, in *RequestRemoveCommentsVideoID, opts ...grpc.CallOption) (*ResponseGeneral, error) {
-	out := new(ResponseGeneral)
-	err := grpc.Invoke(ctx, "/video.VideoService/RemoveCommentsVideo", in, out, c.cc, opts...)
+	err := grpc.Invoke(ctx, "/video.VideoService/RemoveListVideo", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -609,34 +498,42 @@ func (c *videoServiceClient) RemoveCommentsVideo(ctx context.Context, in *Reques
 // Server API for VideoService service
 
 type VideoServiceServer interface {
-	// Search returns a Google search result for the query.
+	GetVideoDetailOne(context.Context, *RequestVideoDetailOne) (*ResponseVideoDetailOne, error)
 	GetVideoDetail(context.Context, *RequestVideoID) (*ResponseVideoDetail, error)
-	GetVideoCover(context.Context, *RequestVideoID) (*ResponseVideoCover, error)
-	GetVideoTS(context.Context, *RequestVideoID) (*ResponseVideoTS, error)
-	GetVideoTotalView(context.Context, *RequestVideoID) (*ResponseVideoTotalView, error)
 	// Delete video, delete field
-	DeleteVideoDetail(context.Context, *RequestDeleteVideo) (*ResponseGeneral, error)
+	DeleteVideoDetail(context.Context, *RequestModifyVideo) (*ResponseGeneral, error)
 	// Set videoDetail, field, update field
-	SetVideoDetail(context.Context, *RequestUpdateVideo) (*ResponseGeneral, error)
+	SetVideoDetail(context.Context, *RequestModifyVideo) (*ResponseGeneral, error)
 	// Video promote
 	GetPromoteVideo(context.Context, *RequestGetPromoteVideo) (*ResponseGetPromoteVideo, error)
 	SetPromoteVideo(context.Context, *RequestVideoID) (*ResponseGeneral, error)
-	// Like of video
-	CountLikeOfVideo(context.Context, *RequestVideoID) (*ResponseCountLike, error)
-	GetListUserIDLikeVideo(context.Context, *RequestVideoID) (*ResponseListUserID, error)
-	AddUserIDToListLikeVideo(context.Context, *RequestAddUserID) (*ResponseGeneral, error)
-	DeleteUserIDFromListLikeVideo(context.Context, *RequesDeleteUserID) (*ResponseGeneral, error)
-	// Spam Like of video
-	CountSpamLikeOfVideo(context.Context, *RequestVideoID) (*ResponseCountSpamLike, error)
-	// Video comments
-	CountCommentOfVideo(context.Context, *RequestCommentVideoID) (*ResponseCountComments, error)
-	GetListCommentsVideo(context.Context, *RequestCommentVideoID) (*ResponseListCommentsVideo, error)
-	AddCommentsVideo(context.Context, *RequestAddCommentsVideoID) (*ResponseGeneral, error)
-	RemoveCommentsVideo(context.Context, *RequestRemoveCommentsVideoID) (*ResponseGeneral, error)
+	// Like, Comment of video
+	GetListVideoOne(context.Context, *RequestGetListVideoOne) (*ResponseGetListVideoOne, error)
+	GetListVideo(context.Context, *RequestGetListVideo) (*ResponseGetListVideo, error)
+	AddListVideo(context.Context, *RequestModifyListVideo) (*ResponseGeneral, error)
+	RemoveListVideo(context.Context, *RequestModifyListVideo) (*ResponseGeneral, error)
 }
 
 func RegisterVideoServiceServer(s *grpc.Server, srv VideoServiceServer) {
 	s.RegisterService(&_VideoService_serviceDesc, srv)
+}
+
+func _VideoService_GetVideoDetailOne_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestVideoDetailOne)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VideoServiceServer).GetVideoDetailOne(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/video.VideoService/GetVideoDetailOne",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VideoServiceServer).GetVideoDetailOne(ctx, req.(*RequestVideoDetailOne))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _VideoService_GetVideoDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -657,62 +554,8 @@ func _VideoService_GetVideoDetail_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _VideoService_GetVideoCover_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RequestVideoID)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(VideoServiceServer).GetVideoCover(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/video.VideoService/GetVideoCover",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VideoServiceServer).GetVideoCover(ctx, req.(*RequestVideoID))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _VideoService_GetVideoTS_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RequestVideoID)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(VideoServiceServer).GetVideoTS(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/video.VideoService/GetVideoTS",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VideoServiceServer).GetVideoTS(ctx, req.(*RequestVideoID))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _VideoService_GetVideoTotalView_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RequestVideoID)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(VideoServiceServer).GetVideoTotalView(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/video.VideoService/GetVideoTotalView",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VideoServiceServer).GetVideoTotalView(ctx, req.(*RequestVideoID))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _VideoService_DeleteVideoDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RequestDeleteVideo)
+	in := new(RequestModifyVideo)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -724,13 +567,13 @@ func _VideoService_DeleteVideoDetail_Handler(srv interface{}, ctx context.Contex
 		FullMethod: "/video.VideoService/DeleteVideoDetail",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VideoServiceServer).DeleteVideoDetail(ctx, req.(*RequestDeleteVideo))
+		return srv.(VideoServiceServer).DeleteVideoDetail(ctx, req.(*RequestModifyVideo))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _VideoService_SetVideoDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RequestUpdateVideo)
+	in := new(RequestModifyVideo)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -742,7 +585,7 @@ func _VideoService_SetVideoDetail_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: "/video.VideoService/SetVideoDetail",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VideoServiceServer).SetVideoDetail(ctx, req.(*RequestUpdateVideo))
+		return srv.(VideoServiceServer).SetVideoDetail(ctx, req.(*RequestModifyVideo))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -783,164 +626,74 @@ func _VideoService_SetPromoteVideo_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _VideoService_CountLikeOfVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RequestVideoID)
+func _VideoService_GetListVideoOne_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestGetListVideoOne)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(VideoServiceServer).CountLikeOfVideo(ctx, in)
+		return srv.(VideoServiceServer).GetListVideoOne(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/video.VideoService/CountLikeOfVideo",
+		FullMethod: "/video.VideoService/GetListVideoOne",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VideoServiceServer).CountLikeOfVideo(ctx, req.(*RequestVideoID))
+		return srv.(VideoServiceServer).GetListVideoOne(ctx, req.(*RequestGetListVideoOne))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _VideoService_GetListUserIDLikeVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RequestVideoID)
+func _VideoService_GetListVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestGetListVideo)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(VideoServiceServer).GetListUserIDLikeVideo(ctx, in)
+		return srv.(VideoServiceServer).GetListVideo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/video.VideoService/GetListUserIDLikeVideo",
+		FullMethod: "/video.VideoService/GetListVideo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VideoServiceServer).GetListUserIDLikeVideo(ctx, req.(*RequestVideoID))
+		return srv.(VideoServiceServer).GetListVideo(ctx, req.(*RequestGetListVideo))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _VideoService_AddUserIDToListLikeVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RequestAddUserID)
+func _VideoService_AddListVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestModifyListVideo)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(VideoServiceServer).AddUserIDToListLikeVideo(ctx, in)
+		return srv.(VideoServiceServer).AddListVideo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/video.VideoService/AddUserIDToListLikeVideo",
+		FullMethod: "/video.VideoService/AddListVideo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VideoServiceServer).AddUserIDToListLikeVideo(ctx, req.(*RequestAddUserID))
+		return srv.(VideoServiceServer).AddListVideo(ctx, req.(*RequestModifyListVideo))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _VideoService_DeleteUserIDFromListLikeVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RequesDeleteUserID)
+func _VideoService_RemoveListVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestModifyListVideo)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(VideoServiceServer).DeleteUserIDFromListLikeVideo(ctx, in)
+		return srv.(VideoServiceServer).RemoveListVideo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/video.VideoService/DeleteUserIDFromListLikeVideo",
+		FullMethod: "/video.VideoService/RemoveListVideo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VideoServiceServer).DeleteUserIDFromListLikeVideo(ctx, req.(*RequesDeleteUserID))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _VideoService_CountSpamLikeOfVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RequestVideoID)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(VideoServiceServer).CountSpamLikeOfVideo(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/video.VideoService/CountSpamLikeOfVideo",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VideoServiceServer).CountSpamLikeOfVideo(ctx, req.(*RequestVideoID))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _VideoService_CountCommentOfVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RequestCommentVideoID)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(VideoServiceServer).CountCommentOfVideo(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/video.VideoService/CountCommentOfVideo",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VideoServiceServer).CountCommentOfVideo(ctx, req.(*RequestCommentVideoID))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _VideoService_GetListCommentsVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RequestCommentVideoID)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(VideoServiceServer).GetListCommentsVideo(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/video.VideoService/GetListCommentsVideo",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VideoServiceServer).GetListCommentsVideo(ctx, req.(*RequestCommentVideoID))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _VideoService_AddCommentsVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RequestAddCommentsVideoID)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(VideoServiceServer).AddCommentsVideo(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/video.VideoService/AddCommentsVideo",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VideoServiceServer).AddCommentsVideo(ctx, req.(*RequestAddCommentsVideoID))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _VideoService_RemoveCommentsVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RequestRemoveCommentsVideoID)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(VideoServiceServer).RemoveCommentsVideo(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/video.VideoService/RemoveCommentsVideo",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VideoServiceServer).RemoveCommentsVideo(ctx, req.(*RequestRemoveCommentsVideoID))
+		return srv.(VideoServiceServer).RemoveListVideo(ctx, req.(*RequestModifyListVideo))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -950,20 +703,12 @@ var _VideoService_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*VideoServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "GetVideoDetailOne",
+			Handler:    _VideoService_GetVideoDetailOne_Handler,
+		},
+		{
 			MethodName: "GetVideoDetail",
 			Handler:    _VideoService_GetVideoDetail_Handler,
-		},
-		{
-			MethodName: "GetVideoCover",
-			Handler:    _VideoService_GetVideoCover_Handler,
-		},
-		{
-			MethodName: "GetVideoTS",
-			Handler:    _VideoService_GetVideoTS_Handler,
-		},
-		{
-			MethodName: "GetVideoTotalView",
-			Handler:    _VideoService_GetVideoTotalView_Handler,
 		},
 		{
 			MethodName: "DeleteVideoDetail",
@@ -982,40 +727,20 @@ var _VideoService_serviceDesc = grpc.ServiceDesc{
 			Handler:    _VideoService_SetPromoteVideo_Handler,
 		},
 		{
-			MethodName: "CountLikeOfVideo",
-			Handler:    _VideoService_CountLikeOfVideo_Handler,
+			MethodName: "GetListVideoOne",
+			Handler:    _VideoService_GetListVideoOne_Handler,
 		},
 		{
-			MethodName: "GetListUserIDLikeVideo",
-			Handler:    _VideoService_GetListUserIDLikeVideo_Handler,
+			MethodName: "GetListVideo",
+			Handler:    _VideoService_GetListVideo_Handler,
 		},
 		{
-			MethodName: "AddUserIDToListLikeVideo",
-			Handler:    _VideoService_AddUserIDToListLikeVideo_Handler,
+			MethodName: "AddListVideo",
+			Handler:    _VideoService_AddListVideo_Handler,
 		},
 		{
-			MethodName: "DeleteUserIDFromListLikeVideo",
-			Handler:    _VideoService_DeleteUserIDFromListLikeVideo_Handler,
-		},
-		{
-			MethodName: "CountSpamLikeOfVideo",
-			Handler:    _VideoService_CountSpamLikeOfVideo_Handler,
-		},
-		{
-			MethodName: "CountCommentOfVideo",
-			Handler:    _VideoService_CountCommentOfVideo_Handler,
-		},
-		{
-			MethodName: "GetListCommentsVideo",
-			Handler:    _VideoService_GetListCommentsVideo_Handler,
-		},
-		{
-			MethodName: "AddCommentsVideo",
-			Handler:    _VideoService_AddCommentsVideo_Handler,
-		},
-		{
-			MethodName: "RemoveCommentsVideo",
-			Handler:    _VideoService_RemoveCommentsVideo_Handler,
+			MethodName: "RemoveListVideo",
+			Handler:    _VideoService_RemoveListVideo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1025,85 +750,70 @@ var _VideoService_serviceDesc = grpc.ServiceDesc{
 func init() { proto.RegisterFile("protos/video/video.proto", fileDescriptor0) }
 
 var fileDescriptor0 = []byte{
-	// 1275 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xac, 0x98, 0x4d, 0x4f, 0x1b, 0x47,
-	0x18, 0xc7, 0xb3, 0x76, 0x8d, 0xf1, 0x03, 0xc6, 0xeb, 0xe1, 0xc5, 0x2f, 0x05, 0xea, 0x4c, 0x48,
-	0x4a, 0x20, 0xc5, 0x02, 0x94, 0xaa, 0xe2, 0x46, 0xb1, 0x83, 0x2c, 0xa8, 0xdd, 0xda, 0x06, 0x92,
-	0xa8, 0x92, 0xbb, 0x61, 0x27, 0xce, 0x06, 0xdb, 0xeb, 0xec, 0x0e, 0x26, 0x28, 0xca, 0xa5, 0xea,
-	0xa1, 0x52, 0x8f, 0xfd, 0x2a, 0x3d, 0xb4, 0x3d, 0xf6, 0x94, 0x43, 0x2b, 0xf5, 0xe5, 0x2b, 0xf4,
-	0xd0, 0x8f, 0x51, 0xcd, 0xec, 0xac, 0xf7, 0xc5, 0xbb, 0x90, 0xba, 0xb9, 0x20, 0xef, 0xec, 0xfc,
-	0x9f, 0xdf, 0xf3, 0xcc, 0xfc, 0x67, 0x76, 0x06, 0xc8, 0xf6, 0x0d, 0x9d, 0xea, 0x66, 0x71, 0xa0,
-	0xa9, 0x44, 0xb7, 0xfe, 0x6e, 0xf0, 0x26, 0x14, 0xe3, 0x0f, 0xf9, 0xc5, 0xb6, 0xae, 0xb7, 0x3b,
-	0xa4, 0xa8, 0xf4, 0xb5, 0xa2, 0xd2, 0xeb, 0xe9, 0x54, 0xa1, 0x9a, 0xde, 0x33, 0xad, 0x4e, 0xf8,
-	0x4b, 0x98, 0xaf, 0x13, 0xb3, 0xaf, 0xf7, 0x4c, 0xb2, 0xa7, 0x9f, 0xf7, 0xe8, 0x9e, 0xde, 0xed,
-	0x92, 0x1e, 0x35, 0xd1, 0x07, 0x10, 0x23, 0x86, 0xa1, 0x1b, 0x59, 0xa9, 0x20, 0xad, 0xce, 0x6c,
-	0xc9, 0x1b, 0x56, 0xe8, 0x32, 0x6b, 0xdb, 0xd3, 0x55, 0x82, 0x66, 0x61, 0x4a, 0x25, 0xe6, 0xa9,
-	0xa1, 0xf5, 0x59, 0xbc, 0x6c, 0xa4, 0x20, 0xad, 0x26, 0x50, 0x12, 0x62, 0x54, 0xa7, 0x4a, 0x27,
-	0x1b, 0x2d, 0x48, 0xab, 0x31, 0xdc, 0x86, 0x5c, 0x9d, 0xbc, 0x38, 0x27, 0x26, 0xdd, 0x55, 0x55,
-	0x3b, 0xf4, 0x31, 0x0b, 0x54, 0x29, 0xa1, 0x14, 0xc4, 0xc5, 0x4f, 0xce, 0x48, 0xa0, 0x75, 0x48,
-	0x9e, 0x5a, 0x7d, 0x5a, 0xe6, 0xa9, 0x6e, 0x90, 0x6c, 0xa4, 0x10, 0x5d, 0x9d, 0xda, 0x9a, 0x13,
-	0x68, 0x8f, 0x1e, 0x4d, 0xc3, 0x7b, 0x67, 0x5a, 0x4f, 0x15, 0xa0, 0x8f, 0x59, 0x19, 0x1c, 0x24,
-	0x7a, 0xb9, 0x20, 0x03, 0x0f, 0xc4, 0xd6, 0x45, 0xb8, 0xae, 0x0a, 0x8b, 0x42, 0x57, 0x27, 0x5d,
-	0x7d, 0x40, 0xae, 0xcd, 0x31, 0x05, 0x71, 0x91, 0x23, 0xcf, 0x2e, 0xe1, 0xcb, 0xe3, 0x25, 0x2b,
-	0xd8, 0x1a, 0xce, 0x43, 0x6d, 0x98, 0x8c, 0x48, 0x79, 0xbc, 0x21, 0xbd, 0xed, 0x10, 0xa3, 0xe1,
-	0xe3, 0x81, 0x37, 0x21, 0xe9, 0xa5, 0xa5, 0x21, 0x21, 0x74, 0xc3, 0xe4, 0x93, 0x10, 0xb3, 0x07,
-	0x56, 0x5a, 0x4d, 0x8c, 0xcc, 0x7d, 0xa3, 0xaf, 0x74, 0x0f, 0xb5, 0x33, 0xf2, 0x6e, 0xe6, 0xfe,
-	0x21, 0xa4, 0x3d, 0xd1, 0xdf, 0x5d, 0xe4, 0xc7, 0x80, 0xdc, 0x83, 0x7c, 0x64, 0x12, 0xa3, 0x52,
-	0x1a, 0x33, 0xf4, 0x0c, 0x4c, 0x58, 0x7a, 0x3e, 0xb8, 0x09, 0xbc, 0x0d, 0xb2, 0xe3, 0x58, 0x11,
-	0x79, 0xc4, 0x04, 0x8e, 0x88, 0x7b, 0x00, 0xdf, 0x67, 0x09, 0x31, 0x51, 0x89, 0x74, 0x08, 0x25,
-	0x6f, 0x2b, 0xcb, 0xc2, 0x82, 0x60, 0xed, 0x13, 0xfa, 0xb9, 0xa1, 0x77, 0x75, 0x4a, 0xac, 0xc9,
-	0xfc, 0x0a, 0x32, 0x76, 0x85, 0xbe, 0x57, 0x63, 0x96, 0xe9, 0xca, 0x25, 0xca, 0xe7, 0x7e, 0x1f,
-	0x52, 0x0e, 0xa1, 0x47, 0x0c, 0xa5, 0x33, 0x5e, 0x64, 0xfc, 0xad, 0x64, 0x17, 0x4f, 0xad, 0xea,
-	0xad, 0x34, 0x47, 0x8a, 0xdf, 0x86, 0xd8, 0x53, 0x8d, 0x74, 0x54, 0xb1, 0xa8, 0x57, 0x44, 0xf4,
-	0x51, 0xe9, 0xc6, 0x03, 0xd6, 0xad, 0xdc, 0xa3, 0xc6, 0x65, 0xfe, 0x1e, 0x80, 0xf3, 0x84, 0xa6,
-	0x20, 0x7a, 0x46, 0x2e, 0x1d, 0x2f, 0x0f, 0x94, 0xce, 0xb9, 0xf0, 0xf2, 0x4e, 0xe4, 0x13, 0xc9,
-	0x9d, 0xca, 0x51, 0x5f, 0x55, 0xc6, 0x4c, 0xc5, 0x25, 0x1d, 0x3f, 0x95, 0x9b, 0x30, 0x23, 0xc2,
-	0x85, 0xed, 0x24, 0xf8, 0x17, 0x09, 0x66, 0xed, 0x29, 0xe0, 0x6f, 0x4a, 0x84, 0x2a, 0xda, 0x98,
-	0xd3, 0x80, 0x76, 0x61, 0x9a, 0xf7, 0x6b, 0xa9, 0x3c, 0x8a, 0xd8, 0x2a, 0xd6, 0x87, 0xa5, 0x8d,
-	0x70, 0x36, 0x5c, 0xbf, 0xad, 0x0a, 0xb7, 0x40, 0xf6, 0xb7, 0x5d, 0x5b, 0xe7, 0x23, 0x67, 0x29,
-	0x72, 0xed, 0x9e, 0x3e, 0x20, 0xc6, 0xf8, 0xab, 0xfc, 0x94, 0xc9, 0x85, 0x43, 0x1f, 0x3b, 0x0e,
-	0xe5, 0xa1, 0x9b, 0x8d, 0x31, 0xe3, 0xa6, 0x21, 0x41, 0xb5, 0x2e, 0x31, 0xa9, 0xd2, 0xed, 0xf3,
-	0xd8, 0x51, 0xac, 0xb0, 0x95, 0xe7, 0x8e, 0xcd, 0x76, 0x97, 0x63, 0x8d, 0x5c, 0xfc, 0x0f, 0x04,
-	0x0b, 0x31, 0xd0, 0xc8, 0x85, 0xb5, 0x49, 0xad, 0xbd, 0x91, 0x20, 0xe1, 0xa8, 0x00, 0x26, 0xaa,
-	0xb5, 0x66, 0xab, 0x76, 0x20, 0xdf, 0x40, 0x71, 0x88, 0xd4, 0x0e, 0xe4, 0x37, 0x12, 0x9a, 0x83,
-	0x54, 0xbd, 0xfc, 0xc5, 0x51, 0xb9, 0xd1, 0x6c, 0x55, 0xaa, 0xc7, 0xbb, 0x87, 0x95, 0x92, 0xfc,
-	0x4f, 0x1c, 0x21, 0x48, 0x1e, 0x57, 0x4a, 0xe5, 0x5a, 0xa5, 0xd4, 0x3a, 0xa9, 0xd7, 0xaa, 0xfb,
-	0xf2, 0xaf, 0x93, 0xac, 0x27, 0x6f, 0x6b, 0xb1, 0x20, 0xe5, 0x87, 0x95, 0x46, 0x53, 0xfe, 0x6d,
-	0x12, 0x25, 0x61, 0xb2, 0xf4, 0x69, 0xab, 0x5c, 0xaf, 0xd7, 0xea, 0xf2, 0xef, 0x29, 0x94, 0x02,
-	0x28, 0xed, 0x36, 0x77, 0x45, 0xc3, 0x1f, 0x29, 0x94, 0x86, 0xe9, 0x46, 0xb9, 0x7e, 0x5c, 0xae,
-	0x8b, 0xa6, 0x3f, 0x53, 0x68, 0x1a, 0xe2, 0x47, 0xd5, 0x83, 0x6a, 0xed, 0xa4, 0x2a, 0xff, 0x98,
-	0x61, 0xa8, 0x6a, 0xb9, 0x79, 0x52, 0xab, 0x1f, 0x88, 0x1e, 0x3f, 0x65, 0xb8, 0xe8, 0x51, 0xa3,
-	0x59, 0xfe, 0x4c, 0x34, 0xfd, 0x9c, 0x59, 0xbb, 0x0f, 0x53, 0xe2, 0xd3, 0xd2, 0xbc, 0xec, 0x13,
-	0x34, 0x05, 0x71, 0xf1, 0x28, 0xdf, 0x40, 0x39, 0x98, 0x17, 0x0f, 0x27, 0x1a, 0x7d, 0xc6, 0xf6,
-	0xf8, 0x13, 0xa2, 0xb5, 0x9f, 0x51, 0x59, 0xda, 0xfa, 0x21, 0x05, 0xd3, 0x7c, 0x74, 0x1b, 0xc4,
-	0x18, 0x68, 0xa7, 0x04, 0xbd, 0x80, 0x99, 0x7d, 0x42, 0xdd, 0x5e, 0x9f, 0xf7, 0x2e, 0x3d, 0xb1,
-	0x40, 0xf2, 0xf9, 0x70, 0xdb, 0xe2, 0x7b, 0x5f, 0xff, 0xf5, 0xf7, 0xf7, 0x91, 0x3b, 0x68, 0xa5,
-	0x38, 0xd8, 0x14, 0x87, 0x1e, 0xcb, 0xf2, 0xc5, 0x36, 0xa1, 0xe2, 0xd7, 0x2b, 0x11, 0xe8, 0x35,
-	0xea, 0x41, 0xd2, 0x46, 0x5a, 0xd6, 0x0c, 0x21, 0xe6, 0x82, 0x88, 0x5c, 0x81, 0xd7, 0x39, 0xf0,
-	0x36, 0xba, 0x15, 0x04, 0xe4, 0x86, 0x75, 0xf1, 0x3a, 0x00, 0x36, 0xaf, 0xd9, 0x08, 0x83, 0x2d,
-	0x04, 0xc1, 0x9a, 0x0d, 0x5c, 0xe4, 0xa4, 0xbb, 0xe8, 0xc3, 0x20, 0xd2, 0xd0, 0xc2, 0x2e, 0xda,
-	0x39, 0xa4, 0x87, 0xb4, 0xa1, 0x83, 0x43, 0xa0, 0x4b, 0x81, 0x50, 0x5b, 0x85, 0xd7, 0x38, 0x7b,
-	0x05, 0xe1, 0x20, 0x36, 0xb3, 0xb5, 0x0b, 0xfb, 0x1c, 0xd2, 0xae, 0xfd, 0x5a, 0x4c, 0x65, 0x2e,
-	0x74, 0x43, 0x1f, 0xa9, 0x57, 0x7c, 0x70, 0x30, 0xe6, 0xcc, 0x45, 0x9c, 0x19, 0x61, 0xaa, 0x5c,
-	0xbd, 0x23, 0xad, 0xa1, 0x36, 0xcc, 0x34, 0xbc, 0x9e, 0xc9, 0x85, 0x6e, 0xd7, 0x63, 0x80, 0xce,
-	0xb9, 0x9a, 0x81, 0x74, 0x48, 0xf9, 0x3f, 0xb5, 0x4b, 0x5e, 0x92, 0xef, 0x75, 0x7e, 0x79, 0x84,
-	0xe6, 0xfd, 0x88, 0x2f, 0x71, 0x6a, 0x06, 0xcd, 0x3b, 0xd4, 0xbe, 0xf5, 0x9e, 0x8d, 0x29, 0x7a,
-	0x02, 0xa9, 0x86, 0x0f, 0xf8, 0x96, 0x7e, 0xb1, 0xcb, 0x2a, 0x70, 0x40, 0x1e, 0x07, 0x00, 0x4c,
-	0x42, 0x59, 0x51, 0x67, 0x20, 0x0f, 0xcf, 0x5e, 0xb5, 0xa7, 0x57, 0x42, 0xb2, 0x3e, 0xc8, 0x50,
-	0x87, 0xef, 0x70, 0x4c, 0x01, 0x2d, 0x3b, 0x98, 0x8e, 0x76, 0x46, 0x8a, 0x7c, 0xc7, 0xf3, 0xd8,
-	0x62, 0x61, 0x9f, 0x50, 0xe7, 0x44, 0xc6, 0xc4, 0x57, 0x22, 0xfd, 0x8b, 0xce, 0x91, 0xe2, 0x65,
-	0xce, 0xcc, 0xe2, 0x59, 0x1f, 0xb3, 0xa3, 0x99, 0xbc, 0xb0, 0xe7, 0x90, 0x1d, 0x9e, 0xcf, 0x9a,
-	0x3a, 0x13, 0x3a, 0xb4, 0x8c, 0x97, 0x36, 0xec, 0x17, 0x3a, 0x8e, 0x62, 0xa2, 0x30, 0xf2, 0xc1,
-	0x14, 0x55, 0x65, 0x2c, 0x0a, 0x4b, 0xee, 0x73, 0xdd, 0x03, 0x43, 0xef, 0x7a, 0x81, 0x5e, 0x47,
-	0xba, 0xfb, 0xfe, 0x97, 0xa9, 0xe3, 0x48, 0xc7, 0xf8, 0x17, 0x30, 0xe7, 0x39, 0x94, 0x5f, 0x33,
-	0x7d, 0x8b, 0x41, 0xd3, 0x67, 0x6b, 0x83, 0x56, 0xb7, 0xd9, 0x57, 0xba, 0x81, 0xd3, 0xf8, 0x8d,
-	0x04, 0xb3, 0xee, 0xab, 0xa0, 0x0d, 0x5e, 0xf4, 0x82, 0xbd, 0xf7, 0xac, 0x60, 0xbe, 0x7d, 0x21,
-	0xc1, 0x9b, 0x9c, 0xbf, 0x8e, 0xee, 0x3a, 0x7c, 0x71, 0x37, 0x31, 0x6d, 0x3e, 0xbb, 0x44, 0xbd,
-	0x2e, 0xbe, 0x1a, 0xd8, 0x69, 0x7c, 0x27, 0xc1, 0x9c, 0xb0, 0x93, 0xf7, 0x5e, 0x73, 0x75, 0x1e,
-	0x85, 0x00, 0x4f, 0x79, 0x2f, 0x4a, 0xdb, 0x3c, 0x97, 0x8f, 0xd0, 0x7a, 0x40, 0x2e, 0xcc, 0x5e,
-	0x4a, 0x27, 0x20, 0x1b, 0x1d, 0x64, 0xff, 0x0d, 0x16, 0x15, 0x46, 0x7c, 0xe6, 0xbb, 0x3d, 0x86,
-	0xce, 0xfe, 0x4d, 0x9e, 0xc2, 0xfb, 0x78, 0x21, 0x20, 0x05, 0x61, 0xba, 0x97, 0xec, 0x70, 0x38,
-	0x72, 0x23, 0x45, 0xb7, 0xbc, 0xcc, 0xc0, 0x4b, 0x6b, 0x28, 0x76, 0x85, 0x63, 0x97, 0x71, 0x2e,
-	0x00, 0x6b, 0xf0, 0x48, 0x3b, 0xd2, 0xda, 0x93, 0x09, 0xfe, 0x8f, 0x81, 0xed, 0x7f, 0x03, 0x00,
-	0x00, 0xff, 0xff, 0x1c, 0xc2, 0x95, 0xe0, 0x59, 0x10, 0x00, 0x00,
+	// 1037 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xa4, 0x96, 0xcf, 0x4f, 0xe3, 0x46,
+	0x14, 0xc7, 0x71, 0x28, 0x24, 0x79, 0x09, 0xb1, 0x99, 0x85, 0x4d, 0x48, 0xa1, 0xcb, 0x5a, 0xad,
+	0x4a, 0xb3, 0x15, 0x51, 0xc3, 0xa1, 0x15, 0x37, 0x76, 0xe3, 0xa2, 0x08, 0x88, 0xa9, 0xe3, 0x85,
+	0xf6, 0xd2, 0x28, 0xe0, 0x07, 0xeb, 0x92, 0x78, 0x52, 0x7b, 0x88, 0x96, 0x6b, 0x4f, 0xbd, 0xf7,
+	0xff, 0xe8, 0xb9, 0xed, 0xa5, 0x52, 0x4f, 0x1c, 0x5a, 0xa9, 0x3f, 0xfe, 0x85, 0x1e, 0xfa, 0x5f,
+	0x74, 0x35, 0x33, 0x26, 0xb1, 0x13, 0x07, 0xa4, 0x6c, 0x0e, 0x91, 0xe7, 0xcd, 0xbc, 0xf7, 0x79,
+	0xdf, 0x37, 0xcf, 0x33, 0x86, 0x52, 0xdf, 0xa7, 0x8c, 0x06, 0xd5, 0x81, 0xeb, 0x20, 0x95, 0xff,
+	0xdb, 0xc2, 0x44, 0x16, 0xc4, 0xa0, 0xbc, 0x7e, 0x49, 0xe9, 0x65, 0x17, 0xab, 0x9d, 0xbe, 0x5b,
+	0xed, 0x78, 0x1e, 0x65, 0x1d, 0xe6, 0x52, 0x2f, 0x90, 0x8b, 0xf4, 0xaf, 0xe1, 0xb1, 0x85, 0xdf,
+	0x5e, 0x63, 0xc0, 0xf6, 0x91, 0x1d, 0xba, 0x01, 0x3b, 0xe1, 0x4e, 0xa6, 0x87, 0x64, 0x19, 0xb2,
+	0xbe, 0x9c, 0x69, 0xd4, 0x4b, 0xca, 0xa6, 0xb2, 0x95, 0x25, 0x4f, 0x21, 0xd3, 0x75, 0x03, 0xc6,
+	0x6e, 0xfa, 0x58, 0x4a, 0x6d, 0x2a, 0x5b, 0x85, 0x9a, 0xba, 0x2d, 0x89, 0xdc, 0xd3, 0xbe, 0xe9,
+	0x23, 0x29, 0xc0, 0x62, 0x0f, 0x7b, 0x67, 0xe8, 0x97, 0xe6, 0xb9, 0x8b, 0xde, 0x86, 0xa2, 0x85,
+	0x41, 0x9f, 0x7a, 0x01, 0x8e, 0x03, 0x9e, 0xc0, 0x02, 0xfa, 0x3e, 0xf5, 0x45, 0xf0, 0x42, 0x4d,
+	0x0b, 0x43, 0x19, 0xdc, 0xf6, 0x82, 0x3a, 0x48, 0x1e, 0x41, 0xce, 0xc1, 0xe0, 0xdc, 0x77, 0xfb,
+	0x3c, 0x63, 0x41, 0xcc, 0x72, 0x80, 0x8f, 0xc1, 0x75, 0x97, 0x85, 0x80, 0x03, 0x78, 0x94, 0x20,
+	0x60, 0xb6, 0xec, 0xf5, 0x1f, 0x15, 0x58, 0x49, 0x4a, 0x77, 0xc6, 0x5c, 0x77, 0xe0, 0x1d, 0x4e,
+	0x2c, 0xcd, 0x6f, 0xce, 0x6f, 0xe5, 0x6a, 0x1f, 0x84, 0x4e, 0x49, 0x00, 0x91, 0x82, 0xe1, 0x31,
+	0xff, 0xa6, 0xfc, 0x0c, 0xb2, 0xc3, 0x01, 0xc9, 0xc1, 0xfc, 0x15, 0xde, 0x84, 0x02, 0x96, 0x60,
+	0x61, 0xd0, 0xe9, 0x5e, 0xcb, 0xec, 0xb3, 0xbb, 0xa9, 0xcf, 0x14, 0xfd, 0x56, 0x19, 0xee, 0xdf,
+	0x11, 0x75, 0xdc, 0x8b, 0x9b, 0xb7, 0xac, 0x00, 0xa9, 0x43, 0x5e, 0xee, 0x5f, 0x3b, 0x38, 0xa7,
+	0x3e, 0x86, 0xa9, 0x6f, 0x0f, 0x53, 0x4f, 0x42, 0x6d, 0x1f, 0x09, 0x8f, 0x16, 0x77, 0x90, 0x1a,
+	0x6a, 0xa0, 0x8d, 0xdb, 0x1e, 0x94, 0x52, 0x8a, 0x76, 0xe2, 0xb1, 0x4f, 0x7b, 0x94, 0xa1, 0x08,
+	0xaf, 0x57, 0x62, 0x3d, 0x14, 0x9d, 0x22, 0x2a, 0xa4, 0x45, 0x66, 0x77, 0x12, 0xf5, 0xef, 0x15,
+	0x20, 0xb1, 0x2c, 0x87, 0xeb, 0x4e, 0xa2, 0xeb, 0xc8, 0x0e, 0x2c, 0x5c, 0xb8, 0xd8, 0x75, 0x4a,
+	0x29, 0x21, 0xf0, 0xfd, 0x24, 0x81, 0x52, 0xdc, 0xe7, 0x7c, 0x99, 0x94, 0xf5, 0x31, 0xc0, 0x68,
+	0xf4, 0xa0, 0xa0, 0x7d, 0x50, 0x47, 0x69, 0x7b, 0xe8, 0x77, 0xba, 0xb3, 0xb5, 0x91, 0xfe, 0x14,
+	0x0a, 0x61, 0x5e, 0xa1, 0x86, 0x09, 0x39, 0xfa, 0x6f, 0x0a, 0x7f, 0x0d, 0x24, 0x4c, 0xcc, 0xd4,
+	0x91, 0x75, 0xdc, 0x19, 0x81, 0x64, 0x0f, 0xf2, 0x62, 0x5d, 0xdb, 0x11, 0x51, 0xc2, 0x26, 0x78,
+	0x36, 0xd6, 0xbf, 0x11, 0xce, 0x76, 0xe4, 0x79, 0xd8, 0x01, 0xe3, 0xb6, 0x07, 0x0b, 0xb6, 0xc5,
+	0x3b, 0x60, 0x22, 0x36, 0x3f, 0x2a, 0x46, 0x2f, 0xbd, 0x94, 0xfb, 0x29, 0xac, 0x46, 0x2b, 0x32,
+	0x5a, 0x38, 0xde, 0x0f, 0x1c, 0x73, 0xb7, 0xcf, 0xca, 0x56, 0xb6, 0x72, 0xab, 0x40, 0x76, 0x24,
+	0x1e, 0x60, 0xb1, 0x69, 0xda, 0x6d, 0xf3, 0x40, 0x9b, 0x23, 0x69, 0x48, 0x99, 0x07, 0xda, 0xad,
+	0x42, 0x56, 0x40, 0xb5, 0x8c, 0x2f, 0x5e, 0x1a, 0x2d, 0xbb, 0xdd, 0x68, 0x9e, 0xec, 0x1d, 0x36,
+	0xea, 0xda, 0x7f, 0x69, 0x42, 0x60, 0xe9, 0xa4, 0x51, 0x37, 0xcc, 0x46, 0xbd, 0x7d, 0x6a, 0x99,
+	0xcd, 0x7d, 0xed, 0xf7, 0x0c, 0x5f, 0x29, 0x6c, 0x6d, 0x1e, 0xc4, 0xf8, 0xb2, 0xd1, 0xb2, 0xb5,
+	0x3f, 0x32, 0x64, 0x09, 0x32, 0xf5, 0xe7, 0x6d, 0xc3, 0xb2, 0x4c, 0x4b, 0xfb, 0x53, 0x25, 0x2a,
+	0x40, 0x7d, 0xcf, 0xde, 0x0b, 0x0d, 0x7f, 0xa9, 0x64, 0x19, 0xf2, 0x2d, 0xc3, 0x3a, 0x31, 0xac,
+	0xd0, 0xf4, 0xb7, 0x4a, 0xf2, 0x90, 0x7e, 0xd9, 0x3c, 0x68, 0x9a, 0xa7, 0x4d, 0xed, 0xa7, 0x22,
+	0x47, 0x35, 0x0d, 0xfb, 0xd4, 0xb4, 0x0e, 0xc2, 0x15, 0x3f, 0x17, 0x85, 0xd3, 0x57, 0x2d, 0xdb,
+	0x38, 0x0a, 0x4d, 0xbf, 0x14, 0x2b, 0x35, 0xc8, 0x0c, 0xdf, 0xda, 0x1c, 0xa4, 0x5f, 0xd0, 0x5e,
+	0x0f, 0x3d, 0xa6, 0xcd, 0x91, 0x35, 0x58, 0x0d, 0x07, 0xa7, 0x2e, 0x7b, 0x75, 0xe8, 0x5e, 0xe1,
+	0x29, 0xba, 0x97, 0xaf, 0x98, 0xa6, 0x54, 0x5a, 0x90, 0x13, 0x05, 0x6b, 0xb1, 0x0e, 0xbb, 0x0e,
+	0x48, 0x16, 0x16, 0x8c, 0xd7, 0x6e, 0xc0, 0x9d, 0x72, 0x90, 0x3e, 0xf6, 0xdd, 0x41, 0x87, 0xa1,
+	0xa6, 0xf0, 0xba, 0x1c, 0x5f, 0x9f, 0x75, 0xdd, 0x73, 0x2d, 0xc5, 0x9f, 0xeb, 0xd8, 0x45, 0x86,
+	0xda, 0x3c, 0x59, 0x81, 0x74, 0x93, 0x32, 0xe3, 0xb5, 0xcb, 0xb4, 0xff, 0xef, 0x7e, 0x4a, 0xe5,
+	0x23, 0x28, 0xd8, 0x6e, 0x0f, 0x1b, 0x9e, 0x4d, 0xfb, 0xb6, 0x8f, 0x9e, 0x43, 0xf2, 0x90, 0x69,
+	0x52, 0x26, 0x0c, 0xda, 0x1c, 0xa7, 0xc8, 0x47, 0xa5, 0xf2, 0x21, 0x64, 0x9e, 0x77, 0xe9, 0xf9,
+	0x95, 0x4d, 0xfb, 0xa4, 0x00, 0xd0, 0xa4, 0x4c, 0x0c, 0xd1, 0x91, 0x19, 0xdc, 0x0d, 0x94, 0xda,
+	0xaf, 0x19, 0xc8, 0xcb, 0x4c, 0xd1, 0x1f, 0xb8, 0xe7, 0x48, 0x18, 0x2c, 0xef, 0xe3, 0xf8, 0x6e,
+	0xaf, 0xc7, 0xdf, 0xda, 0xf8, 0x6c, 0x79, 0x63, 0x7a, 0xbf, 0x9a, 0x1e, 0xea, 0xfa, 0x77, 0xff,
+	0xfc, 0xfb, 0x43, 0x6a, 0x5d, 0x2f, 0x56, 0x07, 0x9f, 0x84, 0xb7, 0xa7, 0x6c, 0xf7, 0xea, 0x25,
+	0x32, 0xea, 0xe1, 0xae, 0x52, 0x21, 0x0e, 0x14, 0xe2, 0x54, 0xb2, 0x9a, 0x80, 0x6c, 0xd4, 0xcb,
+	0xe5, 0xe9, 0x2c, 0xfd, 0x89, 0x00, 0xad, 0xe9, 0x2b, 0x49, 0x20, 0x4e, 0xf9, 0x06, 0x96, 0x65,
+	0x89, 0xa3, 0xa0, 0xb5, 0xa9, 0x27, 0x52, 0xf9, 0xf1, 0xc4, 0x45, 0x22, 0x4e, 0x97, 0x7b, 0x14,
+	0x39, 0x22, 0x7c, 0xa8, 0xa8, 0x15, 0x57, 0x34, 0x03, 0x68, 0xba, 0xa2, 0x40, 0x2a, 0xa2, 0xa0,
+	0x8e, 0x9f, 0xd4, 0x1b, 0x71, 0xcc, 0xd8, 0x74, 0xf9, 0xbd, 0xc9, 0xcb, 0x31, 0x76, 0x07, 0x6c,
+	0x08, 0x64, 0x51, 0x5f, 0x1d, 0x21, 0xfb, 0x72, 0x9e, 0x57, 0x91, 0x9c, 0x81, 0xda, 0x1a, 0x03,
+	0x4e, 0xd9, 0xa9, 0x69, 0x9a, 0x36, 0x05, 0xa0, 0x9c, 0x04, 0x08, 0x45, 0xf9, 0x42, 0x54, 0xec,
+	0x13, 0x66, 0x52, 0x54, 0x74, 0x3a, 0x49, 0x54, 0x74, 0x3e, 0x89, 0xc9, 0xef, 0xe7, 0x48, 0x03,
+	0x5e, 0x40, 0x3e, 0xf6, 0x1d, 0x52, 0x9e, 0x0e, 0x2c, 0xbf, 0x7b, 0x0f, 0x6d, 0x58, 0x3f, 0x32,
+	0x89, 0x92, 0x6d, 0x91, 0xdf, 0x73, 0x9c, 0x11, 0x67, 0xe3, 0xde, 0x0b, 0x7f, 0x6a, 0x11, 0x13,
+	0x29, 0x57, 0x58, 0xed, 0x38, 0x8e, 0x6c, 0x74, 0xd5, 0xc2, 0x1e, 0x1d, 0xe0, 0x5b, 0x83, 0x12,
+	0x2b, 0x77, 0x85, 0x55, 0x5f, 0x84, 0xdf, 0x55, 0x2a, 0x67, 0x8b, 0xe2, 0xfb, 0x76, 0xe7, 0x4d,
+	0x00, 0x00, 0x00, 0xff, 0xff, 0x7a, 0x09, 0x4a, 0xe4, 0x20, 0x0b, 0x00, 0x00,
 }

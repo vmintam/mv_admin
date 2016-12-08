@@ -15,123 +15,6 @@
     "application/json"
   ],
   "paths": {
-    "/v1/video/comments/add": {
-      "post": {
-        "operationId": "AddCommentsVideo",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/videoResponseGeneral"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/videoRequestAddCommentsVideoID"
-            }
-          }
-        ],
-        "tags": [
-          "VideoService"
-        ]
-      }
-    },
-    "/v1/video/comments/listall/{kind}/{videoID}": {
-      "get": {
-        "operationId": "GetListCommentsVideo",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/videoResponseListCommentsVideo"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "kind",
-            "in": "path",
-            "required": true,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "videoID",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "format": "string"
-          }
-        ],
-        "tags": [
-          "VideoService"
-        ]
-      }
-    },
-    "/v1/video/comments/remove": {
-      "post": {
-        "operationId": "RemoveCommentsVideo",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/videoResponseGeneral"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/videoRequestRemoveCommentsVideoID"
-            }
-          }
-        ],
-        "tags": [
-          "VideoService"
-        ]
-      }
-    },
-    "/v1/video/comments/total/{kind}/{videoID}": {
-      "get": {
-        "summary": "Video comments",
-        "operationId": "CountCommentOfVideo",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/videoResponseCountComments"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "kind",
-            "in": "path",
-            "required": true,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "videoID",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "format": "string"
-          }
-        ],
-        "tags": [
-          "VideoService"
-        ]
-      }
-    },
     "/v1/video/detail/delete": {
       "post": {
         "summary": "Delete video, delete field",
@@ -150,7 +33,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/videoRequestDeleteVideo"
+              "$ref": "#/definitions/videoRequestModifyVideo"
             }
           }
         ],
@@ -159,194 +42,14 @@
         ]
       }
     },
-    "/v1/video/detail/getcover/{VideoID}": {
-      "get": {
-        "operationId": "GetVideoCover",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/videoResponseVideoCover"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "VideoID",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "format": "string"
-          }
-        ],
-        "tags": [
-          "VideoService"
-        ]
-      }
-    },
-    "/v1/video/detail/getdetail/{VideoID}": {
-      "get": {
-        "summary": "Search returns a Google search result for the query.",
+    "/v1/video/detail/get": {
+      "post": {
         "operationId": "GetVideoDetail",
         "responses": {
           "200": {
             "description": "",
             "schema": {
               "$ref": "#/definitions/videoResponseVideoDetail"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "VideoID",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "format": "string"
-          }
-        ],
-        "tags": [
-          "VideoService"
-        ]
-      }
-    },
-    "/v1/video/detail/gettimestamp/{VideoID}": {
-      "get": {
-        "operationId": "GetVideoTS",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/videoResponseVideoTS"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "VideoID",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "format": "string"
-          }
-        ],
-        "tags": [
-          "VideoService"
-        ]
-      }
-    },
-    "/v1/video/detail/getview/{VideoID}": {
-      "get": {
-        "operationId": "GetVideoTotalView",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/videoResponseVideoTotalView"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "VideoID",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "format": "string"
-          }
-        ],
-        "tags": [
-          "VideoService"
-        ]
-      }
-    },
-    "/v1/video/detail/update": {
-      "post": {
-        "summary": "Set videoDetail, field, update field",
-        "operationId": "SetVideoDetail",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/videoResponseGeneral"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/videoRequestUpdateVideo"
-            }
-          }
-        ],
-        "tags": [
-          "VideoService"
-        ]
-      }
-    },
-    "/v1/video/like/add": {
-      "post": {
-        "operationId": "AddUserIDToListLikeVideo",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/videoResponseGeneral"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/videoRequestAddUserID"
-            }
-          }
-        ],
-        "tags": [
-          "VideoService"
-        ]
-      }
-    },
-    "/v1/video/like/delete": {
-      "post": {
-        "operationId": "DeleteUserIDFromListLikeVideo",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/videoResponseGeneral"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/videoRequesDeleteUserID"
-            }
-          }
-        ],
-        "tags": [
-          "VideoService"
-        ]
-      }
-    },
-    "/v1/video/like/list": {
-      "post": {
-        "operationId": "GetListUserIDLikeVideo",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/videoResponseListUserID"
             }
           }
         },
@@ -365,25 +68,157 @@
         ]
       }
     },
-    "/v1/video/like/total/{VideoID}": {
-      "get": {
-        "summary": "Like of video",
-        "operationId": "CountLikeOfVideo",
+    "/v1/video/detail/getone": {
+      "post": {
+        "operationId": "GetVideoDetailOne",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/videoResponseCountLike"
+              "$ref": "#/definitions/videoResponseVideoDetailOne"
             }
           }
         },
         "parameters": [
           {
-            "name": "VideoID",
-            "in": "path",
+            "name": "body",
+            "in": "body",
             "required": true,
-            "type": "string",
-            "format": "string"
+            "schema": {
+              "$ref": "#/definitions/videoRequestVideoDetailOne"
+            }
+          }
+        ],
+        "tags": [
+          "VideoService"
+        ]
+      }
+    },
+    "/v1/video/detail/set": {
+      "post": {
+        "summary": "Set videoDetail, field, update field",
+        "operationId": "SetVideoDetail",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/videoResponseGeneral"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/videoRequestModifyVideo"
+            }
+          }
+        ],
+        "tags": [
+          "VideoService"
+        ]
+      }
+    },
+    "/v1/video/like/add": {
+      "post": {
+        "operationId": "AddListVideo",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/videoResponseGeneral"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/videoRequestModifyListVideo"
+            }
+          }
+        ],
+        "tags": [
+          "VideoService"
+        ]
+      }
+    },
+    "/v1/video/like/remove": {
+      "post": {
+        "operationId": "RemoveListVideo",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/videoResponseGeneral"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/videoRequestModifyListVideo"
+            }
+          }
+        ],
+        "tags": [
+          "VideoService"
+        ]
+      }
+    },
+    "/v1/video/list/get": {
+      "post": {
+        "operationId": "GetListVideo",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/videoResponseGetListVideo"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/videoRequestGetListVideo"
+            }
+          }
+        ],
+        "tags": [
+          "VideoService"
+        ]
+      }
+    },
+    "/v1/video/list/getone": {
+      "post": {
+        "summary": "Like, Comment of video",
+        "operationId": "GetListVideoOne",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/videoResponseGetListVideoOne"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/videoRequestGetListVideoOne"
+            }
           }
         ],
         "tags": [
@@ -392,7 +227,7 @@
       }
     },
     "/v1/video/promote/get": {
-      "get": {
+      "post": {
         "summary": "Video promote",
         "operationId": "GetPromoteVideo",
         "responses": {
@@ -433,48 +268,9 @@
           "VideoService"
         ]
       }
-    },
-    "/v1/video/spamlike/total/{VideoID}": {
-      "get": {
-        "summary": "Spam Like of video",
-        "operationId": "CountSpamLikeOfVideo",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/videoResponseCountSpamLike"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "VideoID",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "format": "string"
-          }
-        ],
-        "tags": [
-          "VideoService"
-        ]
-      }
     }
   },
   "definitions": {
-    "videoCommentsVideo": {
-      "type": "object",
-      "properties": {
-        "commentID": {
-          "type": "string",
-          "format": "string"
-        },
-        "score": {
-          "type": "string",
-          "format": "string"
-        }
-      }
-    },
     "videoErrorCode": {
       "type": "string",
       "enum": [
@@ -493,110 +289,65 @@
       "default": "NOT_OK",
       "description": "- REQUEST_INVALID: client\n - VIDEOID_WRONG: server response\n - DB_ERROR: server - Generic error for client\n - UNKNOWN: general - unknown"
     },
-    "videoRequesDeleteUserID": {
+    "videoListType": {
+      "type": "string",
+      "enum": [
+        "Comment",
+        "CommentWithLikeWeight"
+      ],
+      "default": "Comment"
+    },
+    "videoRequestGetListVideo": {
       "type": "object",
       "properties": {
-        "UserID": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "format": "string"
-          }
+        "listtype": {
+          "$ref": "#/definitions/videoListType"
         },
-        "VideoID": {
+        "requestID": {
           "type": "string",
           "format": "string"
         }
       }
     },
-    "videoRequestAddCommentsVideoID": {
+    "videoRequestGetListVideoOne": {
       "type": "object",
       "properties": {
-        "VideoID": {
+        "listtype": {
+          "$ref": "#/definitions/videoListType"
+        },
+        "member": {
           "type": "string",
           "format": "string"
         },
-        "comment_score": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/videoCommentsVideo"
-          }
-        },
-        "kind": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
-    "videoRequestAddUserID": {
-      "type": "object",
-      "properties": {
-        "UserID": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "format": "string"
-          }
-        },
-        "VideoID": {
+        "requestID": {
           "type": "string",
           "format": "string"
-        }
-      }
-    },
-    "videoRequestCommentVideoID": {
-      "type": "object",
-      "properties": {
-        "kind": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "videoID": {
-          "type": "string",
-          "format": "string"
-        }
-      }
-    },
-    "videoRequestDeleteVideo": {
-      "type": "object",
-      "properties": {
-        "VideoID": {
-          "type": "string",
-          "format": "string"
-        },
-        "field": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "format": "string"
-          }
         }
       }
     },
     "videoRequestGetPromoteVideo": {
       "type": "object"
     },
-    "videoRequestRemoveCommentsVideoID": {
+    "videoRequestModifyListVideo": {
       "type": "object",
       "properties": {
-        "VideoID": {
-          "type": "string",
-          "format": "string"
+        "listtype": {
+          "$ref": "#/definitions/videoListType"
         },
-        "comment": {
-          "type": "array",
-          "items": {
+        "member_score": {
+          "type": "object",
+          "additionalProperties": {
             "type": "string",
             "format": "string"
           }
         },
-        "kind": {
-          "type": "integer",
-          "format": "int32"
+        "requestID": {
+          "type": "string",
+          "format": "string"
         }
       }
     },
-    "videoRequestUpdateVideo": {
+    "videoRequestModifyVideo": {
       "type": "object",
       "properties": {
         "VideoID": {
@@ -609,6 +360,19 @@
             "type": "string",
             "format": "string"
           }
+        }
+      }
+    },
+    "videoRequestVideoDetailOne": {
+      "type": "object",
+      "properties": {
+        "field": {
+          "type": "string",
+          "format": "string"
+        },
+        "videoID": {
+          "type": "string",
+          "format": "string"
         }
       }
     },
@@ -620,55 +384,6 @@
           "format": "string"
         }
       }
-    },
-    "videoResponseCountComments": {
-      "type": "object",
-      "properties": {
-        "description": {
-          "type": "string",
-          "format": "string"
-        },
-        "error": {
-          "$ref": "#/definitions/videoErrorCode"
-        },
-        "total": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
-    "videoResponseCountLike": {
-      "type": "object",
-      "properties": {
-        "description": {
-          "type": "string",
-          "format": "string"
-        },
-        "error": {
-          "$ref": "#/definitions/videoErrorCode"
-        },
-        "total": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
-    "videoResponseCountSpamLike": {
-      "type": "object",
-      "properties": {
-        "description": {
-          "type": "string",
-          "format": "string"
-        },
-        "error": {
-          "$ref": "#/definitions/videoErrorCode"
-        },
-        "total": {
-          "type": "integer",
-          "format": "int32"
-        }
-      },
-      "title": "Spam Like"
     },
     "videoResponseGeneral": {
       "type": "object",
@@ -682,72 +397,47 @@
         }
       }
     },
-    "videoResponseGetPromoteVideo": {
+    "videoResponseGetListVideo": {
       "type": "object",
       "properties": {
-        "VideoID": {
-          "type": "string",
-          "format": "string"
-        },
         "description": {
           "type": "string",
           "format": "string"
         },
         "error": {
           "$ref": "#/definitions/videoErrorCode"
-        }
-      }
-    },
-    "videoResponseListCommentsVideo": {
-      "type": "object",
-      "properties": {
-        "comment": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/videoCommentsVideo"
-          }
         },
-        "description": {
-          "type": "string",
-          "format": "string"
-        },
-        "error": {
-          "$ref": "#/definitions/videoErrorCode"
-        }
-      }
-    },
-    "videoResponseListUserID": {
-      "type": "object",
-      "properties": {
-        "UserID": {
-          "type": "array",
-          "items": {
+        "list": {
+          "type": "object",
+          "additionalProperties": {
             "type": "string",
             "format": "string"
           }
-        },
-        "description": {
-          "type": "string",
-          "format": "string"
-        },
-        "error": {
-          "$ref": "#/definitions/videoErrorCode"
         }
       }
     },
-    "videoResponseVideoCover": {
+    "videoResponseGetListVideoOne": {
       "type": "object",
       "properties": {
-        "cover": {
-          "type": "string",
-          "format": "string"
-        },
         "description": {
           "type": "string",
           "format": "string"
         },
         "error": {
           "$ref": "#/definitions/videoErrorCode"
+        },
+        "result": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "videoResponseGetPromoteVideo": {
+      "type": "object",
+      "properties": {
+        "videoID": {
+          "type": "string",
+          "format": "string"
         }
       }
     },
@@ -770,35 +460,12 @@
         }
       }
     },
-    "videoResponseVideoTS": {
+    "videoResponseVideoDetailOne": {
       "type": "object",
       "properties": {
-        "description": {
+        "result": {
           "type": "string",
           "format": "string"
-        },
-        "error": {
-          "$ref": "#/definitions/videoErrorCode"
-        },
-        "timestamp": {
-          "type": "string",
-          "format": "int64"
-        }
-      }
-    },
-    "videoResponseVideoTotalView": {
-      "type": "object",
-      "properties": {
-        "description": {
-          "type": "string",
-          "format": "string"
-        },
-        "error": {
-          "$ref": "#/definitions/videoErrorCode"
-        },
-        "totalview": {
-          "type": "integer",
-          "format": "int32"
         }
       }
     }

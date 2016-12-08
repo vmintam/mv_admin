@@ -43,7 +43,7 @@ type server struct{}
 
 //get detail any hash in DB 9701
 func (s *server) GetDetail(ctx context.Context, req *pb.RequestGetDetail) (*pb.ResponseGetDetail, error) {
-	detail, err := gDetail(req.RequestID, pb.AudioKind(req.Kind))
+	detail, err := gDetail(req.RequestID, req.Kind)
 	if err != nil {
 		return &pb.ResponseGetDetail{
 			Error:       pb.ErrorCode_DB_ERROR,
@@ -58,7 +58,7 @@ func (s *server) GetDetail(ctx context.Context, req *pb.RequestGetDetail) (*pb.R
 }
 
 func (s *server) DeleteDetail(ctx context.Context, req *pb.RequestModifyDetail) (*pb.ResponseGeneral, error) {
-	err := dDetail(req.RequestID, pb.AudioKind(req.Kind), req.Field)
+	err := dDetail(req.RequestID, req.Kind, req.Field)
 	if err != nil {
 		return &pb.ResponseGeneral{
 			Error:       pb.ErrorCode_DB_ERROR,
@@ -72,7 +72,7 @@ func (s *server) DeleteDetail(ctx context.Context, req *pb.RequestModifyDetail) 
 }
 
 func (s *server) SetDetail(ctx context.Context, req *pb.RequestModifyDetail) (*pb.ResponseGeneral, error) {
-	err := sDetail(req.RequestID, pb.AudioKind(req.Kind), req.Field)
+	err := sDetail(req.RequestID, req.Kind, req.Field)
 	if err != nil {
 		return &pb.ResponseGeneral{
 			Error:       pb.ErrorCode_DB_ERROR,
@@ -87,7 +87,7 @@ func (s *server) SetDetail(ctx context.Context, req *pb.RequestModifyDetail) (*p
 
 //get list any zset in DB 9701
 func (s *server) GetList(ctx context.Context, req *pb.RequestGetList) (*pb.ResponseGetList, error) {
-	list, err := gList(req.RequestID, pb.AudioListType(req.Listtype))
+	list, err := gList(req.RequestID, req.Listtype)
 	if err != nil {
 		return &pb.ResponseGetList{
 			Error:       pb.ErrorCode_DB_ERROR,
@@ -102,7 +102,7 @@ func (s *server) GetList(ctx context.Context, req *pb.RequestGetList) (*pb.Respo
 }
 
 func (s *server) AddToList(ctx context.Context, req *pb.RequestModifyList) (*pb.ResponseGeneral, error) {
-	err := aList(req.RequestID, pb.AudioListType(req.Listtype), req.MemberScore)
+	err := aList(req.RequestID, req.Listtype, req.MemberScore)
 	if err != nil {
 		return &pb.ResponseGeneral{
 			Error:       pb.ErrorCode_DB_ERROR,
@@ -116,7 +116,7 @@ func (s *server) AddToList(ctx context.Context, req *pb.RequestModifyList) (*pb.
 }
 
 func (s *server) RemoveToList(ctx context.Context, req *pb.RequestModifyList) (*pb.ResponseGeneral, error) {
-	err := rList(req.RequestID, pb.AudioListType(req.Listtype), req.MemberScore)
+	err := rList(req.RequestID, req.Listtype, req.MemberScore)
 	if err != nil {
 		return &pb.ResponseGeneral{
 			Error:       pb.ErrorCode_DB_ERROR,

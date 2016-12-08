@@ -2,250 +2,168 @@ package main
 
 import (
 	"fmt"
-	"time"
-
+	//	"time"
 	pb "muvik/muvik_admin/protos/video"
 
 	"github.com/garyburd/redigo/redis"
 )
 
 const (
-	VIDEO_PREFIX               = "v::"
-	VIDEO_COVER                = "image"
-	VIDEO_TIMESTAMP            = "timestamp"
-	VIDEO_TOTAL_VIEW           = "total_view"
-	COMMENTS_VIDEO             = `v::%s::c`
-	COMMENTS_VIDEO_LIKE_WEIGHT = `v::%s::c::l`
-	VIDEO_PROMOTE              = "v::promote"
-	USER_LIKE_VIDEO            = `v::%s::l`
-	USER_SPAM_LIKE_VIDEO       = `v::%s::spam_like`
+	VIDEO_DETAIL                    = "v::"
+	VIDEO_PROMOTE                   = "v::promote"
+	LIST_COMMENTS_VIDEO             = `v::%s::c`
+	LIST_COMMENTS_VIDEO_LIKE_WEIGHT = `v::%s::c::l`
 )
 
-func convertTimeStamp(ts int64) (string, error) {
-	//convert to local time
-	datetime := time.Unix(ts, 0)
-	location, err := time.LoadLocation("Asia/Ho_Chi_Minh")
-	if err == nil {
-		datetime = datetime.In(location)
-		return fmt.Sprint(datetime), nil
+//video detail
+
+func gVideoDetail(requestID string) (Detail map[string]string, err error) {
+	conn := video_pool_info.Get()
+	defer conn.Close()
+	key := VIDEO_DETAIL + requestID
+	Detail, err = redis.StringMap(conn.Do("HGETALL", key))
+	if err == redis.ErrNil {
+		return Detail, nil
 	}
-	return "", err
-}
-
-func getVideoDetail(videoID string) (video map[string]string, err error) {
-	conn := video_pool_info.Get()
-	defer conn.Close()
-	// select in redis 9502 -> get total_view video
-	video, err = redis.StringMap(conn.Do("HGETALL", VIDEO_PREFIX+videoID))
 	return
 }
 
-func getCoverImage(videoID string) (cover string, err error) {
+func gVideoOne(requestID string, field string) (One string, err error) {
 	conn := video_pool_info.Get()
 	defer conn.Close()
-	//get video create time
-	created, err := redis.Int64(conn.Do("HGET", VIDEO_PREFIX+videoID, VIDEO_TIMESTAMP))
-	if err != nil {
-		return "", err
+	key := VIDEO_DETAIL + requestID
+	One, err = redis.String(conn.Do("HGET", key, field))
+	if err == redis.ErrNil {
+		return One, nil
 	}
-	//convert ts
-	datetime := time.Unix(created/1000, 0)
-	year := datetime.Year()
-	month := int(datetime.Month())
-	day := datetime.Day()
-	// select in redis 9502 -> get total_view video
-	cover, err = redis.String(conn.Do("HGET", VIDEO_PREFIX+videoID, VIDEO_COVER))
-	cover = fmt.Sprintf("%d/%d/%d/%s", year, month, day, cover)
 	return
 }
 
-func getVideoCreated(videoID string) (created int64, err error) {
+func sVideoDetail(requestID string, fields map[string]string) (err error) {
 	conn := video_pool_info.Get()
 	defer conn.Close()
-	// select in redis 9502 -> get total_view video
-	created, err = redis.Int64(conn.Do("HGET", VIDEO_PREFIX+videoID, VIDEO_TIMESTAMP))
+	key := VIDEO_DETAIL + requestID
+	if fields == nil {
+		return nil
+	} else {
+		args := convertMaptoArray(key, fields)
+		_, err = conn.Do("HMSET", args...)
+		if err != nil {
+			return
+		}
+		return nil
+	}
+}
+
+func dVideoDetail(requestID string, fields map[string]string) (err error) {
+	conn := video_pool_info.Get()
+	defer conn.Close()
+	key := VIDEO_DETAIL + requestID
+	if fields == nil {
+		_, err = conn.Do("HCLEAR", key)
+		if err != nil {
+			return
+		}
+		return nil
+	} else {
+		args := convertMaptoArrayWithOutValue(key, fields)
+		_, err = conn.Do("HDEL", args...)
+		if err != nil {
+			return
+		}
+		return nil
+	}
+}
+
+//video promote
+func gPromoteVideo() (videoid string, err error) {
+	conn := video_pool_info.Get()
+	defer conn.Close()
+	videoid, err = redis.String(conn.Do("GET", VIDEO_PROMOTE))
+	if err == redis.ErrNil {
+		return "", nil
+	}
 	return
 }
 
-func getTotalViews(videoID string) (totalviews int, err error) {
+func sPromoteVideo(videoid string) (err error) {
 	conn := video_pool_info.Get()
 	defer conn.Close()
-	// select in redis 9502 -> get total_view video
-	totalviews, err = redis.Int(conn.Do("HGET", VIDEO_PREFIX+videoID, VIDEO_TOTAL_VIEW))
+	if videoid == "" {
+		return fmt.Errorf("VideoID not empty")
+	}
+	_, err = conn.Do("SET", VIDEO_PROMOTE, videoid)
+	if err == redis.ErrNil {
+		return nil
+	}
+	return err
+}
+
+func gList(requestID string, listtype pb.ListType) (list map[string]string, err error) {
+	conn := video_pool_info.Get()
+	defer conn.Close()
+	key := ""
+	switch listtype {
+	case pb.ListType_Comment:
+		key = fmt.Sprintf(LIST_COMMENTS_VIDEO, requestID)
+	case pb.ListType_CommentWithLikeWeight:
+		key = fmt.Sprintf(LIST_COMMENTS_VIDEO_LIKE_WEIGHT, requestID)
+	default:
+		break
+	}
+	list, err = redis.StringMap(conn.Do("ZRANGE", key, "0", "-1", "withscores"))
+	if err == redis.ErrNil {
+		return list, nil
+	}
 	return
 }
 
-func deleteVideo(videoID string, fields map[string]string) (err error) {
+func aList(requestID string, listtype pb.ListType, member_scores map[string]string) (err error) {
 	conn := video_pool_info.Get()
 	defer conn.Close()
-	if fields != nil {
-		for field_name, _ := range fields {
-			_, err = conn.Do("HDEL", VIDEO_PREFIX+videoID, field_name)
+	key := ""
+	switch listtype {
+	case pb.ListType_Comment:
+		key = fmt.Sprintf(LIST_COMMENTS_VIDEO, requestID)
+	case pb.ListType_CommentWithLikeWeight:
+		key = fmt.Sprintf(LIST_COMMENTS_VIDEO_LIKE_WEIGHT, requestID)
+	default:
+		break
+	}
+	args := revMaptoArray(key, member_scores)
+	_, err = conn.Do("ZADD", args...)
+	return
+}
+
+func rList(requestID string, listtype pb.ListType, member_scores map[string]string) (err error) {
+	conn := video_pool_info.Get()
+	defer conn.Close()
+	key := ""
+	switch listtype {
+	case pb.ListType_Comment:
+		key = fmt.Sprintf(LIST_COMMENTS_VIDEO, requestID)
+	case pb.ListType_CommentWithLikeWeight:
+		key = fmt.Sprintf(LIST_COMMENTS_VIDEO_LIKE_WEIGHT, requestID)
+	default:
+		break
+	}
+
+	if member_scores == nil {
+		_, err = conn.Do("ZCLEAR", key)
+		if err != nil {
+			return
+		}
+		return nil
+	} else {
+		for member, _ := range member_scores {
+			_, err = conn.Do("ZREM", key, member)
 			if err != nil {
 				return err
 			}
 		}
 		return nil
-	} else {
-		_, err = conn.Do("HCLEAR", VIDEO_PREFIX+videoID)
-		if err != nil {
-			return err
-		}
-		return nil
-	}
-	// select in redis 9502 -> get total_view video
-
-}
-
-func updateVideo(videoID string, fields map[string]string) (err error) {
-	conn := video_pool_info.Get()
-	defer conn.Close()
-	if fields != nil {
-		return fmt.Errorf("field not nil")
-	} else {
-		for k, v := range fields {
-			_, err = conn.Do("HMSET", VIDEO_PREFIX+videoID, k, v)
-			if err != nil {
-				return err
-			}
-		}
-		return nil
 	}
 
-}
-
-func GetListComments(videoID string, kind int32) (comments map[string]string, err error) {
-	conn := video_pool_info.Get()
-	defer conn.Close()
-	key := ""
-	if kind == int32(pb.CommentType_Comment) {
-		key = fmt.Sprintf(COMMENTS_VIDEO, videoID)
-	} else {
-		key = fmt.Sprintf(COMMENTS_VIDEO_LIKE_WEIGHT, videoID)
-	}
-	comments, err = redis.StringMap(conn.Do("ZRANGE", key, "0", "-1", "withscores"))
-	if err == redis.ErrNil {
-		return comments, nil
-	}
-	return
-}
-
-func AddComments(videoID string, css []*pb.CommentsVideo, kind int32) (err error) {
-	conn := video_pool_info.Get()
-	defer conn.Close()
-	key := ""
-	if kind == int32(pb.CommentType_Comment) {
-		key = fmt.Sprintf(COMMENTS_VIDEO, videoID)
-	} else {
-		key = fmt.Sprintf(COMMENTS_VIDEO_LIKE_WEIGHT, videoID)
-	}
-	for _, cs := range css {
-		_, err = conn.Do("ZADD", key, &cs.Score, &cs.CommentID)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func DeleteComments(videoID string, commentid []string, kind int32) (err error) {
-	conn := video_pool_info.Get()
-	defer conn.Close()
-	key := ""
-	if kind == int32(pb.CommentType_Comment) {
-		key = fmt.Sprintf(COMMENTS_VIDEO, videoID)
-	} else {
-		key = fmt.Sprintf(COMMENTS_VIDEO_LIKE_WEIGHT, videoID)
-	}
-	for _, c := range commentid {
-		_, err = conn.Do("ZREM", key, c)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func GPromoteVideo() (videoID string, err error) {
-	conn := video_pool_info.Get()
-	defer conn.Close()
-	videoID, err = redis.String(conn.Do("GET", VIDEO_PROMOTE))
-	return
-}
-
-func SPromoteVideo(videoID string) (err error) {
-	conn := video_pool_info.Get()
-	defer conn.Close()
-	_, err = conn.Do("SET", VIDEO_PROMOTE, videoID)
-	return
-}
-
-//Like video
-
-func GetListUserIDLVideo(videoID string) (userIDs []string, err error) {
-	conn := video_pool_related.Get()
-	defer conn.Close()
-	userIDs, err = redis.Strings(conn.Do("HKEYS", fmt.Sprintf(USER_LIKE_VIDEO, videoID)))
-	if err == redis.ErrNil {
-		return userIDs, err
-	}
-	return
-}
-
-func AddUserIDToList(videoID string, userIDs []string) (err error) {
-	conn := video_pool_related.Get()
-	defer conn.Close()
-	args := convertVL(videoID, userIDs)
-	_, err = conn.Do("HMSET", args...)
-	return
-}
-
-func DeleteUserIDFromList(videoID string, userIDs []string) (err error) {
-	conn := video_pool_related.Get()
-	defer conn.Close()
-	for _, user := range userIDs {
-		_, err = conn.Do("HDEL", videoID, user)
-		if err != nil {
-			return err
-		}
-	}
-	return
-}
-
-func TotalCommentVideo(videoID string, kind int32) (total int, err error) {
-	conn := video_pool_info.Get()
-	defer conn.Close()
-	key := ""
-	if kind == int32(pb.CommentType_Comment) {
-		key = fmt.Sprintf(COMMENTS_VIDEO, videoID)
-	} else {
-		key = fmt.Sprintf(COMMENTS_VIDEO_LIKE_WEIGHT, videoID)
-	}
-	total, err = redis.Int(conn.Do("ZCARD", key))
-	if err == redis.ErrNil {
-		return 0, nil
-	}
-	return
-}
-
-func TotalLikeVideo(videoID string) (total int, err error) {
-	conn := video_pool_related.Get()
-	defer conn.Close()
-	total, err = redis.Int(conn.Do("HLEN", fmt.Sprintf(USER_LIKE_VIDEO, videoID)))
-	if err == redis.ErrNil {
-		return 0, nil
-	}
-	return
-}
-
-func TotalSpamLikeVideo(videoID string) (total int, err error) {
-	conn := video_pool_related.Get()
-	defer conn.Close()
-	total, err = redis.Int(conn.Do("HLEN", fmt.Sprintf(USER_SPAM_LIKE_VIDEO, videoID)))
-	if err == redis.ErrNil {
-		return 0, nil
-	}
-	return
 }
 
 func convertVL(first string, input []string) (output []interface{}) {
@@ -260,6 +178,14 @@ func convertMaptoArray(first string, input map[string]string) (output []interfac
 	output = append(output, first)
 	for k, v := range input {
 		output = append(output, k, v)
+	}
+	return
+}
+
+func convertMaptoArrayWithOutValue(first string, input map[string]string) (output []interface{}) {
+	output = append(output, first)
+	for k, _ := range input {
+		output = append(output, k)
 	}
 	return
 }
