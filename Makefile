@@ -1,4 +1,4 @@
-.PHONY: pb data build
+.PHONY: pb
 
 pb:
 	for f in ./protos/**/*.proto; do \
@@ -8,14 +8,18 @@ pb:
 		echo compiled: $$f; \
 	done
 
-lint:
-	./bin/lint.sh
+audios:
+	cd services.db.audios/docker && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o services.db.audios ../ && docker build -t services.db.audios .
 
-build:
-	./bin/build.sh
+videos:
+	cd services.db.videos/docker && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o services.db.videos ../ && docker build -t services.db.videos .
 
-data:
-	go-bindata -o data/bindata.go -pkg data data/*.json
+comments:
+	cd services.db.comments/docker && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o services.db.comments ../ && docker build -t services.db.comments .
+
+users:
+	cd services.db.users/docker && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o services.db.users ../ && docker build -t services.db.users .
+
 
 run:
 	docker-compose build

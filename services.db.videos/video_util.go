@@ -99,6 +99,25 @@ func sPromoteVideo(videoid string) (err error) {
 	return err
 }
 
+func gListOne(requestID string, listtype pb.ListType, member string) (score string, err error) {
+	conn := video_pool_info.Get()
+	defer conn.Close()
+	key := ""
+	switch listtype {
+	case pb.ListType_Comment:
+		key = fmt.Sprintf(LIST_COMMENTS_VIDEO, requestID)
+	case pb.ListType_CommentWithLikeWeight:
+		key = fmt.Sprintf(LIST_COMMENTS_VIDEO_LIKE_WEIGHT, requestID)
+	default:
+		break
+	}
+	score, err = redis.String(conn.Do("ZSCORE", key, member))
+	if err == redis.ErrNil {
+		return "", nil
+	}
+	return
+}
+
 func gList(requestID string, listtype pb.ListType) (list map[string]string, err error) {
 	conn := video_pool_info.Get()
 	defer conn.Close()

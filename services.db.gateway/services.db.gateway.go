@@ -6,6 +6,7 @@ import (
 	"fmt"
 	pbaudio "muvik/muvik_admin/protos/audio"
 	pbcomment "muvik/muvik_admin/protos/comment"
+	pbuser "muvik/muvik_admin/protos/user"
 	pbvideo "muvik/muvik_admin/protos/video"
 	log "muvik/muvik_admin/utilities/logging"
 	"net/http"
@@ -23,10 +24,10 @@ import (
 // param in command line
 var (
 	gatewayPort  = flag.String("port", "8080", "Gateway port")
-	videoDB      = flag.String("video_db", "", "video db, example : localhost:36010")
-	commentDB    = flag.String("comment_db", "", "comment db example: localhost:36020")
-	audioDB      = flag.String("audio_db", "", "audio db example: localhost:36030")
-	userDB       = flag.String("user_db", "", "user db example: localhost:36040")
+	videoDB      = flag.String("video_db", "", "video db, example : localhost:36020")
+	commentDB    = flag.String("comment_db", "", "comment db example: localhost:36030")
+	audioDB      = flag.String("audio_db", "", "audio db example: localhost:36010")
+	userDB       = flag.String("user_db", "", "user db example: localhost:36000")
 	swaggerDir   = flag.String("swagger_dir", "../protos", "path to the directory which contains swagger definitions")
 	swaggerUIDir = flag.String("swaggerui_dir", "../swagger-ui/dist/", "path to the directory which contains swagger definitions")
 )
@@ -55,6 +56,13 @@ func newGateway(ctx context.Context, opts ...runtime.ServeMuxOption) (http.Handl
 	//regiser audio DB service
 	if *audioDB != "" {
 		err := pbaudio.RegisterAudioServiceHandlerFromEndpoint(ctx, mux, *audioDB, dialOpts)
+		if err != nil {
+			return nil, err
+		}
+	}
+	//regiser user DB service
+	if *userDB != "" {
+		err := pbuser.RegisterUserServiceHandlerFromEndpoint(ctx, mux, *userDB, dialOpts)
 		if err != nil {
 			return nil, err
 		}

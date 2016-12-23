@@ -1,0 +1,445 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "protos/user/user.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/user/detail/delete": {
+      "post": {
+        "operationId": "DeleteDetail",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/userResponseGeneral"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userRequestModifyDetail"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/v1/user/detail/get": {
+      "post": {
+        "operationId": "GetDetail",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/userResponseGetDetail"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userRequestGetDetail"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/v1/user/detail/getone": {
+      "post": {
+        "operationId": "GetOne",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/userResponseGetOne"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userRequestGetOne"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/v1/user/detail/set": {
+      "post": {
+        "operationId": "SetDetail",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/userResponseGeneral"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userRequestModifyDetail"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/v1/user/list/add": {
+      "post": {
+        "operationId": "AddToList",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/userResponseGeneral"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userRequestModifyList"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/v1/user/list/get": {
+      "post": {
+        "operationId": "GetList",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/userResponseGetList"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userRequestGetList"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/v1/user/list/getone": {
+      "post": {
+        "operationId": "GetListOne",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/userResponseGetListOne"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userRequestGetListOne"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/v1/user/list/remove": {
+      "post": {
+        "operationId": "RemoveToList",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/userResponseGeneral"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userRequestModifyList"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "userErrorCode": {
+      "type": "string",
+      "enum": [
+        "NOT_OK",
+        "OK",
+        "REQUEST_INVALID",
+        "VIDEOID_WRONG",
+        "VIDEO_NOT_EXIST",
+        "DB_ERROR",
+        "DATA_ERROR",
+        "SERVER_ERROR",
+        "UNKNOWN",
+        "NETWORK_ERROR",
+        "SYSTEM_ERROR"
+      ],
+      "default": "NOT_OK",
+      "description": "- REQUEST_INVALID: client\n - VIDEOID_WRONG: server response\n - DB_ERROR: server - Generic error for client\n - UNKNOWN: general - unknown"
+    },
+    "userRequestGetDetail": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "$ref": "#/definitions/userUserKind"
+        },
+        "requestID": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "userRequestGetList": {
+      "type": "object",
+      "properties": {
+        "listtype": {
+          "$ref": "#/definitions/userUserListType"
+        },
+        "requestID": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "userRequestGetListOne": {
+      "type": "object",
+      "properties": {
+        "listtype": {
+          "$ref": "#/definitions/userUserListType"
+        },
+        "member": {
+          "type": "string",
+          "format": "string"
+        },
+        "requestID": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "userRequestGetOne": {
+      "type": "object",
+      "properties": {
+        "field": {
+          "type": "string",
+          "format": "string"
+        },
+        "kind": {
+          "$ref": "#/definitions/userUserKind"
+        },
+        "requestID": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "userRequestModifyDetail": {
+      "type": "object",
+      "properties": {
+        "field": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "string"
+          }
+        },
+        "kind": {
+          "$ref": "#/definitions/userUserKind"
+        },
+        "requestID": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "userRequestModifyList": {
+      "type": "object",
+      "properties": {
+        "listtype": {
+          "$ref": "#/definitions/userUserListType"
+        },
+        "member_score": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "string"
+          }
+        },
+        "requestID": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "userResponseGeneral": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "error": {
+          "$ref": "#/definitions/userErrorCode"
+        }
+      }
+    },
+    "userResponseGetDetail": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "detail": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "string"
+          }
+        },
+        "error": {
+          "$ref": "#/definitions/userErrorCode"
+        }
+      }
+    },
+    "userResponseGetList": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "error": {
+          "$ref": "#/definitions/userErrorCode"
+        },
+        "list": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "string"
+          }
+        }
+      }
+    },
+    "userResponseGetListOne": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "error": {
+          "$ref": "#/definitions/userErrorCode"
+        },
+        "result": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "userResponseGetOne": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "error": {
+          "$ref": "#/definitions/userErrorCode"
+        },
+        "result": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "userUserKind": {
+      "type": "string",
+      "enum": [
+        "detail",
+        "fbid_userid",
+        "fb_friend",
+        "fb_userid"
+      ],
+      "default": "detail"
+    },
+    "userUserListType": {
+      "type": "string",
+      "enum": [
+        "listVideoOfUser",
+        "listVideoSharedOfUser",
+        "listAudioInterestOfUser",
+        "listFBFriendOfUser",
+        "listFansOfUser",
+        "listIdolOfUser"
+      ],
+      "default": "listVideoOfUser"
+    }
+  }
+}

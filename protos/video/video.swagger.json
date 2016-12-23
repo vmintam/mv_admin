@@ -435,6 +435,13 @@
     "videoResponseGetPromoteVideo": {
       "type": "object",
       "properties": {
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "error": {
+          "$ref": "#/definitions/videoErrorCode"
+        },
         "videoID": {
           "type": "string",
           "format": "string"
@@ -463,6 +470,13 @@
     "videoResponseVideoDetailOne": {
       "type": "object",
       "properties": {
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "error": {
+          "$ref": "#/definitions/videoErrorCode"
+        },
         "result": {
           "type": "string",
           "format": "string"

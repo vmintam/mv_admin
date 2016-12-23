@@ -34,7 +34,8 @@ var (
 
 // param in command line
 var (
-	index      = flag.Int("index", 0, "RPC port is 36020+index; debug port is 35020+index")
+	port       = flag.Int("port", 36030, "RPC port for comments db service")
+	debug      = flag.Int("port", 35030, "RPC port for debug comments db service")
 	comment_db = flag.String("comment_db", "127.0.0.1:6379", "comment database for connection")
 )
 
@@ -151,9 +152,9 @@ func main() {
 	//init redisa
 	comment_pool.Dial = zconn.RedisConnect("tcp", *comment_db)
 
-	go http.ListenAndServe(fmt.Sprintf(":%d", 35020+*index), nil) // HTTP debugging
+	go http.ListenAndServe(fmt.Sprintf(":%d", *debug), nil) // HTTP debugging
 
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", 36020+*index)) // RPC port
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port)) // RPC port
 	if err != nil {
 		log.Error("failed to listen: %v", err)
 	}

@@ -1,0 +1,226 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "protos/toplist/toplist.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/audio/toplist/add": {
+      "post": {
+        "operationId": "AddList",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/videoResponseGeneral"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/videoRequestModifyList"
+            }
+          }
+        ],
+        "tags": [
+          "TopListService"
+        ]
+      }
+    },
+    "/v1/audio/toplist/get": {
+      "post": {
+        "operationId": "GetList",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/videoResponseGetList"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/videoRequestGetList"
+            }
+          }
+        ],
+        "tags": [
+          "TopListService"
+        ]
+      }
+    },
+    "/v1/audio/toplist/remove": {
+      "post": {
+        "operationId": "RemoveList",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/videoResponseGeneral"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/videoRequestModifyList"
+            }
+          }
+        ],
+        "tags": [
+          "TopListService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "videoErrorCode": {
+      "type": "string",
+      "enum": [
+        "NOT_OK",
+        "OK",
+        "REQUEST_INVALID",
+        "VIDEOID_WRONG",
+        "VIDEO_NOT_EXIST",
+        "DB_ERROR",
+        "DATA_ERROR",
+        "SERVER_ERROR",
+        "UNKNOWN",
+        "NETWORK_ERROR",
+        "SYSTEM_ERROR"
+      ],
+      "default": "NOT_OK",
+      "description": "- REQUEST_INVALID: client\n - VIDEOID_WRONG: server response\n - DB_ERROR: server - Generic error for client\n - UNKNOWN: general - unknown"
+    },
+    "videoKeyObj": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "$ref": "#/definitions/videoTopKey"
+        },
+        "kind": {
+          "$ref": "#/definitions/videoTopType"
+        },
+        "time": {
+          "$ref": "#/definitions/videoTopTime"
+        }
+      }
+    },
+    "videoRequestGetList": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "$ref": "#/definitions/videoKeyObj"
+        }
+      }
+    },
+    "videoRequestModifyList": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "$ref": "#/definitions/videoKeyObj"
+        },
+        "member": {
+          "type": "string",
+          "format": "string"
+        },
+        "score": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "videoResponseGeneral": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "error": {
+          "$ref": "#/definitions/videoErrorCode"
+        }
+      }
+    },
+    "videoResponseGetList": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "format": "string"
+        },
+        "detail": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "string"
+          }
+        },
+        "error": {
+          "$ref": "#/definitions/videoErrorCode"
+        }
+      }
+    },
+    "videoTopKey": {
+      "type": "string",
+      "enum": [
+        "top_video",
+        "time_in_top_100",
+        "top_hashtag",
+        "follow_video",
+        "favorite_video",
+        "video_of_audio",
+        "audio_uploaded",
+        "top_user",
+        "top_daily_1x",
+        "top_daily_2x",
+        "top_xfactor"
+      ],
+      "default": "top_video"
+    },
+    "videoTopTime": {
+      "type": "string",
+      "enum": [
+        "today",
+        "total",
+        "month"
+      ],
+      "default": "today"
+    },
+    "videoTopType": {
+      "type": "string",
+      "enum": [
+        "like",
+        "hot",
+        "view",
+        "trend",
+        "time",
+        "feature",
+        "upload",
+        "video_created"
+      ],
+      "default": "like"
+    }
+  }
+}

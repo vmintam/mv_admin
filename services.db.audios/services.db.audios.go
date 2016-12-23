@@ -34,7 +34,8 @@ var (
 
 // param in command line
 var (
-	index    = flag.Int("index", 0, "RPC port is 36030+index; debug port is 35030+index")
+	port     = flag.Int("port", 36010, "RPC port for services.db.audios")
+	debug    = flag.Int("debug", 35010, "http debug port")
 	audio_db = flag.String("audio_db", "127.0.0.1:6379", "audio database for connection")
 )
 
@@ -42,6 +43,21 @@ var (
 type server struct{}
 
 //get detail any hash in DB 9701
+func (s *server) GetOne(ctx context.Context, req *pb.RequestGetOne) (*pb.ResponseGetOne, error) {
+	result, err := gDetailOne(req.RequestID, req.Kind, req.Field)
+	if err != nil {
+		return &pb.ResponseGetOne{
+			Error:       pb.ErrorCode_DB_ERROR,
+			Description: pb.ErrorCode_DB_ERROR.String(),
+		}, err
+	}
+	return &pb.ResponseGetOne{
+		Error:       pb.ErrorCode_OK,
+		Description: pb.ErrorCode_OK.String(),
+		Result:      result,
+	}, err
+}
+
 func (s *server) GetDetail(ctx context.Context, req *pb.RequestGetDetail) (*pb.ResponseGetDetail, error) {
 	detail, err := gDetail(req.RequestID, req.Kind)
 	if err != nil {
@@ -86,6 +102,21 @@ func (s *server) SetDetail(ctx context.Context, req *pb.RequestModifyDetail) (*p
 }
 
 //get list any zset in DB 9701
+func (s *server) GetListOne(ctx context.Context, req *pb.RequestGetListOne) (*pb.ResponseGetListOne, error) {
+	result, err := gListOne(req.RequestID, req.Listtype, req.Member)
+	if err != nil {
+		return &pb.ResponseGetListOne{
+			Error:       pb.ErrorCode_DB_ERROR,
+			Description: pb.ErrorCode_DB_ERROR.String(),
+		}, err
+	}
+	return &pb.ResponseGetListOne{
+		Error:       pb.ErrorCode_OK,
+		Description: pb.ErrorCode_OK.String(),
+		Result:      result,
+	}, err
+}
+
 func (s *server) GetList(ctx context.Context, req *pb.RequestGetList) (*pb.ResponseGetList, error) {
 	list, err := gList(req.RequestID, req.Listtype)
 	if err != nil {
@@ -135,9 +166,9 @@ func main() {
 	//init redisa
 	audio_pool.Dial = zconn.RedisConnect("tcp", *audio_db)
 
-	go http.ListenAndServe(fmt.Sprintf(":%d", 35030+*index), nil) // HTTP debugging
+	go http.ListenAndServe(fmt.Sprintf(":%d", *debug), nil) // HTTP debugging
 
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", 36030+*index)) // RPC port
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port)) // RPC port
 	if err != nil {
 		log.Error("failed to listen: %v", err)
 	}

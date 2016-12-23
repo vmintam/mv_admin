@@ -1,0 +1,113 @@
+syntax = "proto3";
+
+package video;
+
+import "google/api/annotations.proto";
+
+service TopListService {
+  // Search returns a Google search result for the query.
+
+  rpc GetList(RequestGetList) returns (ResponseGetList){
+	option (google.api.http) = {
+       post: "/v1/audio/toplist/get"
+	   body: "*"
+    };
+  }
+
+ rpc AddList(RequestModifyList) returns (ResponseGeneral){
+	option (google.api.http) = {
+       post: "/v1/audio/toplist/add"
+	   body: "*"
+    };
+  }
+
+rpc RemoveList(RequestModifyList) returns (ResponseGeneral){
+	option (google.api.http) = {
+       post: "/v1/audio/toplist/remove"
+	   body: "*"
+    };
+  }
+ 
+}
+
+message RequestModifyList {
+	string member = 1;
+	string score = 2;
+	KeyObj key  = 3;
+}
+
+message RequestGetList {
+	KeyObj key  = 1;
+}
+
+message ResponseGetList {
+	ErrorCode error = 1;
+	string description  = 2;
+	map<string, string> detail = 3;
+}
+
+message ResponseGeneral {
+	ErrorCode error = 1;
+	string description  = 2;
+}
+
+message KeyObj {
+	TopKey key = 1;
+	TopType kind = 2;
+	TopTime time = 3;
+}
+
+
+enum TopType {
+	like = 0;
+	hot = 1;
+	view = 2;
+	trend = 3;
+	time = 4;
+	feature = 5;
+	upload = 6;
+	video_created = 7;
+}
+
+enum TopTime {
+	today = 0;
+	total = 1;
+	month = 2;
+}
+
+enum TopKey {
+	top_video = 0;
+	time_in_top_100 = 1;
+	top_hashtag = 2;
+	follow_video = 3;
+	favorite_video = 4;
+	video_of_audio = 5;
+	audio_uploaded = 6;
+	top_user = 7;
+	top_daily_1x = 8;
+	top_daily_2x = 9;
+	top_xfactor = 10;
+}
+
+enum ErrorCode
+{
+	NOT_OK = 0;
+	OK = 200;
+
+	// client
+	REQUEST_INVALID = 1000;
+	
+	//server response
+	VIDEOID_WRONG = 1100;
+	VIDEO_NOT_EXIST = 1101;
+	
+    // server - Generic error for client
+    DB_ERROR = 2000;
+    DATA_ERROR = 2001;
+    SERVER_ERROR = 2002;
+
+    // general - unknown
+    UNKNOWN = 3000;
+    NETWORK_ERROR = 3001;
+    SYSTEM_ERROR = 3002;
+}

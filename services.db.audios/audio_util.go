@@ -48,21 +48,13 @@ func gListOne(requestID string, listtype pb.AudioListType, member string) (resul
 	case pb.AudioListType_listEventIDEnd:
 		key = LIST_EVENTID_END
 	case pb.AudioListType_listUserIDInEvent:
-		key = fmt.Sprintf(LIST_USERID_IN_EVENT, requestID)
-		arrs, err := redis.Strings(conn.Do("SMEMBERS", key))
-		if err == redis.ErrNil {
-			return list, nil
-		}
-		for _, v := range arrs {
-			list[v] = "1"
-		}
-		return list, nil
+		return
 	default:
-		break
+		return
 	}
-	list, err = redis.StringMap(conn.Do("ZRANGE", key, "0", "-1", "withscores"))
+	result, err = redis.String(conn.Do("ZSCORE", key, member))
 	if err == redis.ErrNil {
-		return list, nil
+		return "", nil
 	}
 	return
 }
@@ -214,7 +206,7 @@ func gDetailOne(requestID string, kind pb.AudioKind, field string) (result strin
 	default:
 		break
 	}
-	result, err = redis.StringMap(conn.Do("HGET", key, field))
+	result, err = redis.String(conn.Do("HGET", key, field))
 	if err == redis.ErrNil {
 		return "", nil
 	}
